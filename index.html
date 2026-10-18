@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 <script>
   tailwind.config = {
     theme: {
@@ -123,6 +124,12 @@
   .scene:hover .glare { opacity: 1; }
   .pop-z { transform: translateZ(46px); }
   .pop-z2 { transform: translateZ(30px); }
+  /* drag & drop */
+  .sortable-ghost { opacity: .35; }
+  .sortable-ghost .tile { box-shadow: none !important; outline: 3px dashed var(--teal); outline-offset: 4px; }
+  .sortable-chosen .tile { cursor: grabbing; }
+  .sortable-drag .tile { transform: rotate(-3deg) scale(1.04) !important; }
+  #grid.sorting .tile { cursor: grab; }
   .clamp2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
   @keyframes rise { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: none } }
@@ -191,7 +198,7 @@
 
     <!-- Toolbar -->
     <div id="toolbar" class="hidden mt-12 mb-6 flex flex-wrap items-center justify-between gap-3">
-      <h2 class="font-display font-semibold text-2xl">المواقع</h2>
+      <div><h2 class="font-display font-semibold text-2xl">المواقع</h2><p id="dragHint" class="text-soft text-sm mt-0.5">اسحب أي مربع بالماوس لتغيير مكانه.</p></div>
       <div class="relative w-full sm:w-80">
         <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input id="search" type="search" placeholder="ابحث في مواقعك…"
@@ -233,6 +240,10 @@
   const $ = (id) => document.getElementById(id);
   const LS_KEY = "my-sites-v1";
   let links = load();
+  let justDragged = false;
+  // give every site an order (older pages saved none)
+  links.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || (a.createdAt || 0) - (b.createdAt || 0));
+  links.forEach((l, i) => { l.order = i; });
   let query = "";
   let pendingImg = null;
   let changeTarget = null;
@@ -386,6 +397,9 @@
       });
     }
 
+    scene.dataset.id = l.id;
+    a.addEventListener("click", (e) => { if (justDragged) e.preventDefault(); });
+    a.draggable = false;
     scene.append(a, controls(scene, l));
     return scene;
   }
@@ -425,12 +439,14 @@
     const grid = $("grid");
     grid.textContent = "";
     const q = query.trim().toLowerCase();
-    const list = links.slice().sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0))
+    const list = links.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
       .filter((l) => !q || l.name.toLowerCase().includes(q) || l.url.toLowerCase().includes(q));
     list.forEach((l, i) => grid.append(card(l, i)));
     $("empty").classList.toggle("hidden", links.length > 0);
     $("toolbar").classList.toggle("hidden", links.length === 0);
     $("noResults").classList.toggle("hidden", !(links.length && !list.length));
+    if (sortable) sortable.option("disabled", !!q);
+    $("dragHint").textContent = q ? "امسح البحث لتتمكن من ترتيب المربعات." : "اسحب أي مربع بالماوس لتغيير مكانه.";
     const n = links.length;
     $("count").textContent = n === 0 ? "لا توجد مواقع" : n === 1 ? "موقع واحد" : n === 2 ? "موقعان" : n <= 10 ? ar(n) + " مواقع" : ar(n) + " موقعاً";
   }
@@ -441,7 +457,7 @@
     const url = normalize($("url").value);
     if (!name) { showMsg("اكتب اسم الموقع."); $("name").focus(); return; }
     if (!url) { showMsg("الرابط غير صحيح. اكتبه مثل: example.com"); $("url").focus(); return; }
-    const item = { id: "l" + Date.now() + Math.random().toString(36).slice(2, 6), name, url, createdAt: Date.now() };
+    const item = { id: "l" + Date.now() + Math.random().toString(36).slice(2, 6), name, url, createdAt: Date.now(), order: links.length };
     if (pendingImg) item.img = pendingImg;
     links.push(item);
     if (!save()) { links.pop(); return; }
@@ -484,7 +500,7 @@
       for (const d of data) {
         if (!d || typeof d.name !== "string" || typeof d.url !== "string") continue;
         const u = normalize(d.url); if (!u || have.has(u)) continue;
-        const item = { id: "l" + Date.now() + Math.random().toString(36).slice(2, 6), name: d.name, url: u, createdAt: d.createdAt || Date.now() };
+        const item = { id: "l" + Date.now() + Math.random().toString(36).slice(2, 6), name: d.name, url: u, createdAt: d.createdAt || Date.now(), order: links.length };
         if (typeof d.img === "string" && d.img.startsWith("data:image/")) item.img = d.img;
         links.push(item); have.add(u); added++;
       }
@@ -493,6 +509,25 @@
     } catch (e) { showMsg("الملف غير صالح. اختر ملف نسخة احتياطية صدّرته من هذه الصفحة."); }
     ev.target.value = "";
   });
+
+  let sortable = null;
+  if (window.Sortable) {
+    sortable = Sortable.create($("grid"), {
+      animation: 220,
+      easing: "cubic-bezier(.2,.8,.2,1)",
+      delay: 180, delayOnTouchOnly: true,
+      filter: "button, [data-confirm]", preventOnFilter: false,
+      onEnd: () => {
+        const ids = [...$("grid").children].map((c) => c.dataset.id);
+        ids.forEach((id, i) => { const l = links.find((x) => x.id === id); if (l) l.order = i; });
+        save();
+        justDragged = true; setTimeout(() => { justDragged = false; }, 250);
+      },
+    });
+    $("grid").classList.add("sorting");
+  } else {
+    $("dragHint").classList.add("hidden");
+  }
 
   render();
 })();
