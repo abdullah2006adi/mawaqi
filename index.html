@@ -338,20 +338,10 @@
     if (l.img) {
       const pic = el("img", "absolute inset-0 w-full h-full object-cover");
       pic.src = l.img; pic.alt = "";
-      const shade = el("div", "absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent");
-      face.append(pic, shade);
+      face.append(pic);
       a.append(face);
-
-      const label = el("div", "pop-z absolute inset-x-3 bottom-3 flex items-center justify-between gap-2 rounded-2xl px-3.5 py-2.5 text-white");
-      label.style.background = "rgba(255,255,255,.18)";
-      label.style.backdropFilter = "blur(10px)";
-      label.style.webkitBackdropFilter = "blur(10px)";
-      label.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,.35), 0 8px 18px -8px rgba(0,0,0,.45)";
-      label.append(el("h3", "min-w-0 font-display font-semibold text-base sm:text-lg leading-snug truncate", l.name));
-      const go = el("span", "shrink-0 grid place-items-center w-8 h-8 rounded-full bg-white/90 text-ink");
-      go.innerHTML = arrowSvg;
-      label.append(go);
-      a.append(label);
+      a.title = l.name;
+      a.setAttribute("aria-label", l.name);
     } else {
       face.style.background = `linear-gradient(150deg, ${c1} 0%, ${c2} 100%)`;
       const blob = el("div", "absolute -top-10 -left-10 w-40 h-40 rounded-full");
