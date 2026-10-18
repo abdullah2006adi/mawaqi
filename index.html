@@ -17,126 +17,215 @@
           body: ['Tajawal', '"Readex Pro"', 'Tahoma', 'sans-serif'],
         },
         colors: {
-          ink: { 950: '#0b1f1c', 900: '#10302b', 800: '#164039' },
-          gold: { 300: '#f3d58a', 400: '#e8bf5a', 500: '#d4a53a' },
+          page: 'var(--page)',
+          panel: 'var(--panel)',
+          field: 'var(--field)',
+          ink: 'var(--ink)',
+          soft: 'var(--soft)',
+          line: 'var(--line)',
+          teal: 'var(--teal)',
+          tealdeep: 'var(--teal-deep)',
         },
-        boxShadow: {
-          card: '0 1px 2px rgba(16,48,43,.06), 0 8px 24px -12px rgba(16,48,43,.18)',
-          lift: '0 2px 4px rgba(16,48,43,.08), 0 24px 48px -16px rgba(16,48,43,.35)',
-        },
-        keyframes: {
-          pop: { '0%': { opacity: 0, transform: 'translateY(10px) scale(.97)' }, '100%': { opacity: 1, transform: 'none' } },
-        },
-        animation: { pop: 'pop .35s cubic-bezier(.2,.8,.2,1) both' },
       },
     },
   };
 </script>
 <style>
-  .pattern {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='.07' stroke-width='1.2'%3E%3Cpath d='M36 6l9 21 21 9-21 9-9 21-9-21-21-9 21-9z'/%3E%3Cpath d='M15 15h42v42H15z' transform='rotate(45 36 36)'/%3E%3Ccircle cx='36' cy='36' r='6'/%3E%3C/g%3E%3C/svg%3E");
+  /* Calm palette: mint + sky, soft teal accent. Raised "clay" 3D surfaces. */
+  :root {
+    --page: #eef5f3;
+    --page2: #e9f0fa;
+    --panel: rgba(255,255,255,.78);
+    --field: #f3f7f6;
+    --ink: #24343f;
+    --soft: #6a7c86;
+    --line: rgba(36,52,63,.10);
+    --teal: #4fa89c;
+    --teal-deep: #3a877c;
+    --edge: rgba(36,52,63,.10);
+    --shadow: rgba(40,80,90,.22);
   }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page: #15202a; --page2: #182433;
+      --panel: rgba(30,43,56,.82); --field: #1d2b38;
+      --ink: #e6eef2; --soft: #9fb1bc; --line: rgba(255,255,255,.08);
+      --teal: #6cc3b6; --teal-deep: #4fa497;
+      --edge: rgba(0,0,0,.35); --shadow: rgba(0,0,0,.5);
+    }
+  }
+  body {
+    background:
+      radial-gradient(1200px 600px at 85% -10%, var(--page2), transparent 60%),
+      radial-gradient(900px 500px at 0% 100%, var(--page2), transparent 60%),
+      var(--page);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* floating 3D spheres in the background */
+  .orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: saturate(.9);
+    animation: float 14s ease-in-out infinite; }
+  .orb-a { width: 220px; height: 220px; top: 60px; left: 6%;
+    background: radial-gradient(circle at 32% 28%, #ffffff, #bfe6df 38%, #7cc4b8 75%, #5aa99d); opacity: .55; }
+  .orb-b { width: 130px; height: 130px; top: 340px; right: 4%; animation-delay: -5s;
+    background: radial-gradient(circle at 32% 28%, #ffffff, #cfdcf6 40%, #96b1e6 78%, #7b97d3); opacity: .5; }
+  .orb-c { width: 90px; height: 90px; bottom: 80px; left: 40%; animation-delay: -9s;
+    background: radial-gradient(circle at 32% 28%, #ffffff, #f6e2cf 40%, #e8bf98 80%); opacity: .45; }
+  @keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-22px) } }
+
+  /* raised panel */
+  .clay {
+    background: var(--panel);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.7),
+      0 1px 0 var(--edge), 0 2px 0 var(--edge), 0 3px 0 var(--edge),
+      0 18px 40px -18px var(--shadow);
+  }
+  @media (prefers-color-scheme: dark) { .clay { box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 1px 0 var(--edge), 0 2px 0 var(--edge), 0 3px 0 var(--edge), 0 18px 40px -18px var(--shadow); } }
+
+  /* 3D push button */
+  .btn3d {
+    transition: transform .12s ease, box-shadow .12s ease, filter .15s;
+    box-shadow: 0 5px 0 var(--btn-edge), 0 12px 20px -10px var(--shadow);
+  }
+  .btn3d:hover { filter: brightness(1.05); }
+  .btn3d:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--btn-edge), 0 4px 8px -6px var(--shadow); }
+
+  /* tiles */
+  .scene { perspective: 900px; }
+  .tile {
+    position: relative; aspect-ratio: 1 / 1; border-radius: 28px;
+    transform-style: preserve-3d;
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+    transition: transform .25s ease, box-shadow .25s ease;
+    box-shadow:
+      0 1px 0 var(--tile-edge), 0 2px 0 var(--tile-edge), 0 3px 0 var(--tile-edge),
+      0 4px 0 var(--tile-edge), 0 5px 0 var(--tile-edge), 0 6px 0 var(--tile-edge),
+      0 22px 34px -14px var(--shadow);
+  }
+  .scene:hover .tile {
+    box-shadow:
+      0 1px 0 var(--tile-edge), 0 2px 0 var(--tile-edge), 0 3px 0 var(--tile-edge),
+      0 4px 0 var(--tile-edge), 0 5px 0 var(--tile-edge), 0 6px 0 var(--tile-edge),
+      0 7px 0 var(--tile-edge), 0 8px 0 var(--tile-edge),
+      0 36px 48px -18px var(--shadow);
+  }
+  .tile-face { position: absolute; inset: 0; border-radius: 28px; overflow: hidden; }
+  .tile-face::after { /* top bevel highlight */
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,.55), inset 0 -2px 0 rgba(0,0,0,.06);
+  }
+  .glare { position: absolute; inset: 0; border-radius: 28px; pointer-events: none; opacity: 0; transition: opacity .25s;
+    background: radial-gradient(circle at var(--gx, 50%) var(--gy, 0%), rgba(255,255,255,.45), transparent 55%); }
+  .scene:hover .glare { opacity: 1; }
+  .pop-z { transform: translateZ(46px); }
+  .pop-z2 { transform: translateZ(30px); }
   .clamp2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: none } }
+  .rise { animation: rise .45s cubic-bezier(.2,.8,.2,1) both; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .tile { transform: none !important; }
+  }
 </style>
 </head>
-<body class="font-body bg-stone-100 text-ink-950 dark:bg-[#0a1513] dark:text-stone-100 min-h-screen antialiased">
+<body class="font-body antialiased">
 
-  <!-- Header band -->
-  <header class="relative bg-gradient-to-bl from-ink-800 via-ink-900 to-ink-950 text-white overflow-hidden">
-    <div class="pattern absolute inset-0"></div>
-    <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-gold-400/20 blur-3xl"></div>
-    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 pt-10 pb-28">
-      <div class="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p id="hijri" class="text-gold-300 text-sm font-medium tracking-wide"></p>
-          <h1 class="font-display font-bold text-4xl sm:text-5xl mt-2">مواقعي</h1>
-        </div>
-        <div class="flex items-center gap-2 bg-white/10 backdrop-blur rounded-full px-4 py-2 text-sm">
-          <span class="w-2 h-2 rounded-full bg-gold-400"></span>
-          <span id="count" class="tabular-nums">لا توجد مواقع</span>
-        </div>
+  <div class="orb orb-a"></div>
+  <div class="orb orb-b"></div>
+  <div class="orb orb-c"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 pt-10 pb-20">
+
+    <!-- Header -->
+    <header class="flex flex-wrap items-end justify-between gap-4 mb-8">
+      <div>
+        <p id="hijri" class="text-teal text-sm font-medium"></p>
+        <h1 class="font-display font-bold text-5xl sm:text-6xl mt-1 tracking-tight"
+            style="text-shadow: 0 1px 0 rgba(255,255,255,.6), 0 3px 0 var(--edge), 0 10px 24px var(--shadow);">مواقعي</h1>
       </div>
-    </div>
-  </header>
-
-  <main class="relative max-w-6xl mx-auto px-4 sm:px-6 -mt-20 pb-16">
+      <div class="clay rounded-full px-5 py-2.5 text-sm flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-teal"></span>
+        <span id="count" class="tabular-nums text-soft">لا توجد مواقع</span>
+      </div>
+    </header>
 
     <!-- Add form -->
-    <form id="addForm" novalidate
-      class="bg-white dark:bg-[#12201d] rounded-3xl shadow-lift ring-1 ring-black/5 dark:ring-white/10 p-5 sm:p-6">
-      <div class="flex items-center gap-3 mb-4">
-        <span class="grid place-items-center w-9 h-9 rounded-xl bg-gold-400/20 text-gold-500">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-        </span>
-        <h2 class="font-display font-semibold text-lg">إضافة موقع جديد</h2>
-      </div>
-      <div class="grid gap-3 md:grid-cols-[1fr_1.5fr_auto_auto] md:items-end">
+    <form id="addForm" novalidate class="clay rounded-[28px] p-5 sm:p-6">
+      <div class="grid gap-4 lg:grid-cols-[1fr_1.4fr_auto] lg:items-end">
         <label class="block">
-          <span class="text-sm text-stone-500 dark:text-stone-400">اسم الموقع</span>
+          <span class="text-sm text-soft">اسم الموقع</span>
           <input id="name" type="text" autocomplete="off" placeholder="مثال: منصة استعداد"
-            class="mt-1 w-full rounded-xl border-0 bg-stone-100 dark:bg-white/5 px-4 py-3 ring-1 ring-transparent focus:ring-2 focus:ring-ink-800 dark:focus:ring-gold-400 focus:bg-white dark:focus:bg-white/10 outline-none transition">
+            class="mt-1.5 w-full rounded-2xl border-0 bg-field px-4 py-3.5 text-ink placeholder:text-soft/60 outline-none ring-2 ring-transparent focus:ring-teal transition"
+            style="box-shadow: inset 0 2px 4px rgba(0,0,0,.06);">
         </label>
         <label class="block">
-          <span class="text-sm text-stone-500 dark:text-stone-400">الرابط</span>
+          <span class="text-sm text-soft">الرابط</span>
           <input id="url" type="text" dir="ltr" inputmode="url" autocomplete="off" placeholder="example.com"
-            class="mt-1 w-full rounded-xl border-0 bg-stone-100 dark:bg-white/5 px-4 py-3 text-left ring-1 ring-transparent focus:ring-2 focus:ring-ink-800 dark:focus:ring-gold-400 focus:bg-white dark:focus:bg-white/10 outline-none transition">
+            class="mt-1.5 w-full rounded-2xl border-0 bg-field px-4 py-3.5 text-left text-ink placeholder:text-soft/60 outline-none ring-2 ring-transparent focus:ring-teal transition"
+            style="box-shadow: inset 0 2px 4px rgba(0,0,0,.06);">
         </label>
-        <div class="flex gap-3 md:contents">
-        <button type="button" id="imgBtn"
-          class="relative h-12 flex-1 md:flex-none inline-flex items-center justify-center gap-2 rounded-xl px-5 font-display font-medium bg-stone-100 dark:bg-white/5 ring-1 ring-black/5 dark:ring-white/10 hover:ring-ink-800 dark:hover:ring-gold-400 transition overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-ink-800">
-          <img id="imgPreview" alt="" class="hidden w-8 h-8 rounded-lg object-cover">
-          <svg id="imgIcon" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
-          <span id="imgLabel">صورة</span>
-        </button>
-        <input id="imgFile" type="file" accept="image/*" class="hidden">
-        <button type="submit"
-          class="h-12 flex-1 md:flex-none rounded-xl px-8 font-display font-semibold text-ink-950 bg-gradient-to-l from-gold-300 to-gold-400 hover:from-gold-400 hover:to-gold-500 shadow-card active:scale-[.98] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ink-800">
-          إدخال
-        </button>
+        <div class="flex gap-3">
+          <button type="button" id="imgBtn"
+            class="btn3d flex-1 lg:flex-none h-[52px] inline-flex items-center justify-center gap-2 rounded-2xl px-5 font-display font-medium bg-panel text-ink ring-1 ring-line focus:outline-none focus-visible:ring-2 focus-visible:ring-teal"
+            style="--btn-edge: var(--edge); background: var(--field);">
+            <img id="imgPreview" alt="" class="hidden w-8 h-8 rounded-lg object-cover">
+            <svg id="imgIcon" class="w-5 h-5 text-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+            <span id="imgLabel">صورة</span>
+          </button>
+          <button type="submit"
+            class="btn3d flex-1 lg:flex-none h-[52px] rounded-2xl px-9 font-display font-semibold text-white bg-teal focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-teal"
+            style="--btn-edge: var(--teal-deep);">
+            إدخال
+          </button>
         </div>
       </div>
-      <p class="mt-3 text-xs text-stone-400">الصورة اختيارية: إن لم تضعها تظهر أيقونة الموقع على خلفية ملوّنة.</p>
-      <p id="msg" role="alert" class="hidden mt-3 text-sm text-rose-600 dark:text-rose-400"></p>
+      <input id="imgFile" type="file" accept="image/*" class="hidden">
+      <p id="msg" role="alert" class="hidden mt-3 text-sm text-rose-500"></p>
     </form>
 
     <!-- Toolbar -->
-    <div id="toolbar" class="hidden mt-10 mb-5 flex flex-wrap items-center justify-between gap-3">
-      <h2 class="font-display font-semibold text-xl">المواقع</h2>
-      <div class="relative w-full sm:w-72">
-        <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <div id="toolbar" class="hidden mt-12 mb-6 flex flex-wrap items-center justify-between gap-3">
+      <h2 class="font-display font-semibold text-2xl">المواقع</h2>
+      <div class="relative w-full sm:w-80">
+        <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input id="search" type="search" placeholder="ابحث في مواقعك…"
-          class="w-full rounded-full border-0 bg-white dark:bg-white/5 pr-9 pl-4 py-2.5 text-sm shadow-card ring-1 ring-black/5 dark:ring-white/10 focus:ring-2 focus:ring-ink-800 dark:focus:ring-gold-400 outline-none">
+          class="clay w-full rounded-full border-0 pr-10 pl-4 py-3 text-sm text-ink placeholder:text-soft/70 outline-none ring-2 ring-transparent focus:ring-teal">
       </div>
     </div>
 
     <!-- Grid -->
-    <div id="grid" class="grid gap-4 sm:gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"></div>
+    <div id="grid" class="grid gap-6 sm:gap-8 grid-cols-2 md:grid-cols-3 xl:grid-cols-4"></div>
 
     <!-- Empty -->
-    <div id="empty" class="hidden mt-10 rounded-3xl border-2 border-dashed border-stone-300 dark:border-white/10 py-16 px-6 text-center">
-      <div class="mx-auto w-14 h-14 grid place-items-center rounded-2xl bg-ink-900 text-gold-300 mb-4">
-        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+    <div id="empty" class="hidden mt-12 clay rounded-[28px] py-16 px-6 text-center">
+      <div class="mx-auto w-16 h-16 grid place-items-center rounded-2xl bg-teal text-white mb-4"
+           style="box-shadow: 0 5px 0 var(--teal-deep), 0 14px 24px -10px var(--shadow);">
+        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
       </div>
-      <p class="font-display font-semibold text-lg">لا توجد مواقع بعد</p>
-      <p class="text-stone-500 dark:text-stone-400 mt-1">اكتب اسم الموقع ورابطه في الأعلى ثم اضغط «إدخال».</p>
+      <p class="font-display font-semibold text-xl">لا توجد مواقع بعد</p>
+      <p class="text-soft mt-1">اكتب اسم الموقع ورابطه في الأعلى، واختر له صورة إن شئت، ثم اضغط «إدخال».</p>
     </div>
-    <p id="noResults" class="hidden text-center text-stone-500 py-10">لا توجد نتائج مطابقة.</p>
+    <p id="noResults" class="hidden text-center text-soft py-12">لا توجد نتائج مطابقة.</p>
 
     <!-- Backup -->
-    <footer class="mt-14 pt-6 border-t border-stone-200 dark:border-white/10 flex flex-wrap items-center gap-3 text-sm">
-      <button id="exportBtn" type="button" class="inline-flex items-center gap-2 rounded-full bg-white dark:bg-white/5 px-4 py-2 shadow-card ring-1 ring-black/5 dark:ring-white/10 hover:ring-ink-800 dark:hover:ring-gold-400 transition">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg>
+    <footer class="mt-16 flex flex-wrap items-center gap-3 text-sm">
+      <button id="exportBtn" type="button" class="btn3d inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-ink ring-1 ring-line" style="--btn-edge: var(--edge); background: var(--field);">
+        <svg class="w-4 h-4 text-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg>
         حفظ نسخة احتياطية
       </button>
-      <button id="importBtn" type="button" class="inline-flex items-center gap-2 rounded-full bg-white dark:bg-white/5 px-4 py-2 shadow-card ring-1 ring-black/5 dark:ring-white/10 hover:ring-ink-800 dark:hover:ring-gold-400 transition">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 21V9m0 0-4 4m4-4 4 4M5 3h14"/></svg>
+      <button id="importBtn" type="button" class="btn3d inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-ink ring-1 ring-line" style="--btn-edge: var(--edge); background: var(--field);">
+        <svg class="w-4 h-4 text-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 21V9m0 0-4 4m4-4 4 4M5 3h14"/></svg>
         استيراد نسخة
       </button>
       <input id="importFile" type="file" accept="application/json,.json" class="hidden">
-      <p id="note" class="basis-full text-stone-500 dark:text-stone-400">المواقع محفوظة في هذا المتصفح. لنقلها إلى جهاز آخر احفظ نسخة احتياطية ثم استوردها هناك.</p>
+      <p id="note" class="basis-full text-soft mt-1">المواقع محفوظة في هذا المتصفح. لنقلها إلى جهاز آخر احفظ نسخة احتياطية ثم استوردها هناك.</p>
     </footer>
-  </main>
+  </div>
 
 <script>
 (function () {
@@ -146,43 +235,24 @@
   let query = "";
   let pendingImg = null;
   let changeTarget = null;
+  const canTilt = window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+                  !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  function readImage(file, cb) {
-    if (!file || !file.type.startsWith("image/")) { showMsg("اختر ملف صورة (JPG أو PNG)."); return; }
-    const r = new FileReader();
-    r.onload = () => {
-      const im = new Image();
-      im.onload = () => {
-        const max = 640;
-        const k = Math.min(1, max / Math.max(im.width, im.height));
-        const c = document.createElement("canvas");
-        c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
-        c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
-        cb(c.toDataURL("image/jpeg", 0.82));
-      };
-      im.onerror = () => showMsg("تعذر قراءة الصورة. جرّب صورة أخرى.");
-      im.src = r.result;
-    };
-    r.readAsDataURL(file);
-  }
-  function setPending(d) {
-    pendingImg = d;
-    $("imgPreview").classList.toggle("hidden", !d);
-    $("imgIcon").classList.toggle("hidden", !!d);
-    if (d) $("imgPreview").src = d;
-    $("imgLabel").textContent = d ? "تغيير" : "صورة";
-  }
-
-  // Hijri + Gregorian date
   try {
-    const d = new Date();
-    const hijri = new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(d);
-    $("hijri").textContent = hijri;
+    $("hijri").textContent = new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura",
+      { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date());
   } catch (e) {}
 
+  // soft, eye-friendly tile palettes: [light, mid, icon colour, edge]
   const palettes = [
-    ["#0f766e", "#14b8a6"], ["#1e3a8a", "#3b82f6"], ["#9f1239", "#f43f5e"], ["#7c2d12", "#f97316"],
-    ["#581c87", "#a855f7"], ["#14532d", "#22c55e"], ["#0c4a6e", "#06b6d4"], ["#713f12", "#eab308"],
+    ["#e3f4ef", "#bfe3d9", "#3a877c", "#a6cfc4"],  // mint
+    ["#e4ecfb", "#c3d4f3", "#4a6db3", "#aabfe6"],  // sky
+    ["#efe6f8", "#d8c7ef", "#7556a6", "#c3afe2"],  // lavender
+    ["#fbece1", "#f3d3bb", "#b0693a", "#e6bfa1"],  // peach
+    ["#eaf2e2", "#cfe2bd", "#5b8a3c", "#b8d3a1"],  // sage
+    ["#f8e6ea", "#efc8d1", "#a8506a", "#e2b0bd"],  // rose
+    ["#f6f0dd", "#e9dbb0", "#8f7428", "#d8c793"],  // sand
+    ["#dff2f6", "#b8e1ea", "#2f8299", "#a0d0dc"],  // aqua
   ];
   function paletteFor(s) {
     let h = 0; for (const c of s) h = (h * 31 + c.codePointAt(0)) >>> 0;
@@ -201,98 +271,153 @@
   function hostOf(u) { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return u; } }
   function ar(n) { return n.toLocaleString("ar-EG"); }
   function load() { try { return JSON.parse(localStorage.getItem(LS_KEY) || "[]"); } catch (e) { return []; } }
-  function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(links)); return true; } catch (e) { showMsg("لا توجد مساحة كافية لحفظ الصورة. احذف بعض الصور أو استعمل صوراً أصغر."); return false; } }
+  function save() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(links)); return true; }
+    catch (e) { showMsg("لا توجد مساحة كافية للحفظ. احذف بعض الصور أو استعمل صوراً أصغر."); return false; }
+  }
   function showMsg(t) { const m = $("msg"); m.textContent = t; m.classList.toggle("hidden", !t); }
-
   function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 
-  function card(l, i) {
-    const [c1, c2] = paletteFor(l.name + l.url);
-    const host = hostOf(l.url);
-    const wrap = el("div", "group relative animate-pop");
-    wrap.style.animationDelay = Math.min(i * 40, 400) + "ms";
-
-    const a = el("a", "flex flex-col h-full rounded-3xl bg-white dark:bg-[#12201d] shadow-card ring-1 ring-black/5 dark:ring-white/10 overflow-hidden transition duration-300 hover:-translate-y-1.5 hover:shadow-lift focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400");
-    a.href = l.url; a.target = "_blank"; a.rel = "noopener";
-
-    if (l.img) {
-      a.className = "relative block aspect-[4/5] rounded-3xl overflow-hidden shadow-card ring-1 ring-black/5 dark:ring-white/10 transition duration-300 hover:-translate-y-1.5 hover:shadow-lift focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400";
-      const pic = el("img", "absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-105");
-      pic.src = l.img; pic.alt = "";
-      const shade = el("div", "absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent");
-      const info = el("div", "absolute inset-x-0 bottom-0 p-4 flex items-end justify-between gap-2 text-white");
-      const txt = el("div", "min-w-0");
-      txt.append(el("h3", "font-display font-semibold text-base sm:text-lg leading-snug clamp2 drop-shadow", l.name));
-      const hs = el("p", "text-xs text-white/75 truncate mt-0.5", host); hs.dir = "ltr"; hs.style.textAlign = "right";
-      txt.append(hs);
-      const go = el("span", "shrink-0 grid place-items-center w-9 h-9 rounded-full bg-white/20 backdrop-blur transition group-hover:bg-gold-400 group-hover:text-ink-950");
-      go.innerHTML = '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M17 7 7 17M8 7h9v9"/></svg>';
-      info.append(txt, go);
-      a.append(pic, shade, info);
-      wrap.append(a, controls(wrap, l));
-      return wrap;
-    }
-
-    // colored top
-    const top = el("div", "relative h-24 sm:h-28 overflow-hidden");
-    top.style.background = `linear-gradient(135deg, ${c1}, ${c2})`;
-    const pat = el("div", "pattern absolute inset-0 opacity-80"); top.append(pat);
-    const glow = el("div", "absolute -bottom-10 -left-6 w-28 h-28 rounded-full bg-white/20 blur-2xl"); top.append(glow);
-
-    // icon badge
-    const badge = el("div", "absolute right-4 -bottom-7 w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white dark:bg-[#1a2c28] shadow-lift ring-4 ring-white dark:ring-[#12201d] grid place-items-center overflow-hidden transition duration-300 group-hover:scale-105 group-hover:-rotate-3");
-    const letter = el("span", "font-display font-bold text-2xl", (l.name.trim()[0] || "؟"));
-    letter.style.color = c1;
-    const img = new Image();
-    img.alt = ""; img.className = "w-8 h-8 sm:w-9 sm:h-9 object-contain hidden";
-    img.referrerPolicy = "no-referrer";
-    img.onload = () => { if (img.naturalWidth > 16) { img.classList.remove("hidden"); letter.remove(); } };
-    img.src = "https://www.google.com/s2/favicons?sz=128&domain=" + encodeURIComponent(host);
-    badge.append(letter, img);
-
-    const body = el("div", "flex-1 flex flex-col px-4 pt-10 pb-4");
-    body.append(el("h3", "font-display font-semibold text-base sm:text-lg leading-snug clamp2", l.name));
-    const foot = el("div", "mt-auto pt-3 flex items-center justify-between gap-2");
-    const pill = el("span", "min-w-0 truncate text-xs text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-white/5 rounded-full px-2.5 py-1", host);
-    pill.dir = "ltr";
-    const arrow = el("span", "shrink-0 grid place-items-center w-8 h-8 rounded-full bg-stone-100 dark:bg-white/5 text-stone-500 transition group-hover:bg-ink-900 group-hover:text-gold-300");
-    arrow.innerHTML = '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M17 7 7 17M8 7h9v9"/></svg>';
-    foot.append(pill, arrow);
-    body.append(foot);
-
-    a.append(top, badge, body);
-
-    wrap.append(a, controls(wrap, l));
-    return wrap;
+  // read an image, crop it to a centred square, shrink to 600×600
+  function readImage(file, cb) {
+    if (!file || !file.type.startsWith("image/")) { showMsg("اختر ملف صورة (JPG أو PNG)."); return; }
+    const r = new FileReader();
+    r.onload = () => {
+      const im = new Image();
+      im.onload = () => {
+        const side = Math.min(im.width, im.height);
+        const sx = (im.width - side) / 2, sy = (im.height - side) / 2;
+        const out = Math.min(600, side);
+        const c = document.createElement("canvas");
+        c.width = c.height = out;
+        const ctx = c.getContext("2d");
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(im, sx, sy, side, side, 0, 0, out, out);
+        cb(c.toDataURL("image/jpeg", 0.85));
+      };
+      im.onerror = () => showMsg("تعذر قراءة الصورة. جرّب صورة أخرى.");
+      im.src = r.result;
+    };
+    r.readAsDataURL(file);
+  }
+  function setPending(d) {
+    pendingImg = d;
+    $("imgPreview").classList.toggle("hidden", !d);
+    $("imgIcon").classList.toggle("hidden", !!d);
+    if (d) $("imgPreview").src = d;
+    $("imgLabel").textContent = d ? "تغيير" : "صورة";
   }
 
-  function controls(wrap, l) {
-    const box = el("div", "absolute top-3 left-3 z-10 flex gap-1.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 [@media(hover:none)]:opacity-100 transition");
-    const btnCls = "grid place-items-center w-8 h-8 rounded-full bg-black/30 text-white backdrop-blur transition";
-    const pic = el("button", btnCls + " hover:bg-ink-900");
+  const arrowSvg = '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M17 7 7 17M8 7h9v9"/></svg>';
+
+  function card(l, i) {
+    const [c1, c2, c3, edge] = paletteFor(l.name + l.url);
+    const host = hostOf(l.url);
+
+    const scene = el("div", "scene group relative rise");
+    scene.style.animationDelay = Math.min(i * 50, 500) + "ms";
+
+    const a = el("a", "tile block focus:outline-none focus-visible:ring-4 focus-visible:ring-teal");
+    a.href = l.url; a.target = "_blank"; a.rel = "noopener";
+    a.style.setProperty("--tile-edge", l.img ? "rgba(36,52,63,.18)" : edge);
+
+    const face = el("div", "tile-face");
+
+    if (l.img) {
+      const pic = el("img", "absolute inset-0 w-full h-full object-cover");
+      pic.src = l.img; pic.alt = "";
+      const shade = el("div", "absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent");
+      face.append(pic, shade);
+      a.append(face);
+
+      const label = el("div", "pop-z absolute inset-x-3 bottom-3 flex items-center justify-between gap-2 rounded-2xl px-3.5 py-2.5 text-white");
+      label.style.background = "rgba(255,255,255,.18)";
+      label.style.backdropFilter = "blur(10px)";
+      label.style.webkitBackdropFilter = "blur(10px)";
+      label.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,.35), 0 8px 18px -8px rgba(0,0,0,.45)";
+      label.append(el("h3", "min-w-0 font-display font-semibold text-base sm:text-lg leading-snug truncate", l.name));
+      const go = el("span", "shrink-0 grid place-items-center w-8 h-8 rounded-full bg-white/90 text-ink");
+      go.innerHTML = arrowSvg;
+      label.append(go);
+      a.append(label);
+    } else {
+      face.style.background = `linear-gradient(150deg, ${c1} 0%, ${c2} 100%)`;
+      const blob = el("div", "absolute -top-10 -left-10 w-40 h-40 rounded-full");
+      blob.style.background = "radial-gradient(circle, rgba(255,255,255,.6), transparent 70%)";
+      face.append(blob);
+      a.append(face);
+
+      const inner = el("div", "absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 text-center");
+      inner.style.transformStyle = "preserve-3d";
+      const badge = el("div", "pop-z grid place-items-center w-20 h-20 sm:w-24 sm:h-24 rounded-[26px] bg-white");
+      badge.style.boxShadow = `0 1px 0 ${edge}, 0 2px 0 ${edge}, 0 3px 0 ${edge}, 0 4px 0 ${edge}, 0 16px 24px -10px rgba(40,80,90,.35), inset 0 -3px 0 rgba(0,0,0,.04)`;
+      const letter = el("span", "font-display font-bold text-4xl", (l.name.trim()[0] || "؟"));
+      letter.style.color = c3;
+      const img = new Image();
+      img.alt = ""; img.className = "w-11 h-11 sm:w-12 sm:h-12 object-contain hidden";
+      img.referrerPolicy = "no-referrer";
+      img.onload = () => { if (img.naturalWidth > 16) { img.classList.remove("hidden"); letter.remove(); } };
+      img.src = "https://www.google.com/s2/favicons?sz=128&domain=" + encodeURIComponent(host);
+      badge.append(letter, img);
+      const name = el("h3", "pop-z2 font-display font-semibold text-base sm:text-xl leading-snug clamp2 px-2", l.name);
+      name.style.color = "#24343f";
+      const hs = el("span", "pop-z2 text-xs rounded-full px-3 py-1 max-w-full truncate", host);
+      hs.dir = "ltr";
+      hs.style.background = "rgba(255,255,255,.6)";
+      hs.style.color = c3;
+      inner.append(badge, name, hs);
+      a.append(inner);
+    }
+
+    a.append(el("div", "glare"));
+
+    if (canTilt) {
+      a.addEventListener("pointermove", (e) => {
+        const r = a.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        a.style.setProperty("--ry", ((x - .5) * 16).toFixed(2) + "deg");
+        a.style.setProperty("--rx", ((.5 - y) * 16).toFixed(2) + "deg");
+        a.style.setProperty("--gx", (x * 100).toFixed(1) + "%");
+        a.style.setProperty("--gy", (y * 100).toFixed(1) + "%");
+      });
+      a.addEventListener("pointerleave", () => {
+        a.style.setProperty("--rx", "0deg"); a.style.setProperty("--ry", "0deg");
+      });
+    }
+
+    scene.append(a, controls(scene, l));
+    return scene;
+  }
+
+  function controls(scene, l) {
+    const box = el("div", "absolute top-3 left-3 z-20 flex gap-1.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 [@media(hover:none)]:opacity-100 transition");
+    const cls = "grid place-items-center w-9 h-9 rounded-full bg-white/85 text-ink shadow-md backdrop-blur transition";
+    const pic = el("button", cls + " hover:bg-teal hover:text-white");
     pic.type = "button"; pic.title = l.img ? "تغيير الصورة" : "إضافة صورة"; pic.setAttribute("aria-label", pic.title);
-    pic.innerHTML = '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>';
+    pic.innerHTML = '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>';
     pic.addEventListener("click", () => { changeTarget = l.id; $("imgFile").click(); });
-    const del = el("button", btnCls + " hover:bg-rose-600");
+    const del = el("button", cls + " hover:bg-rose-500 hover:text-white");
     del.type = "button"; del.title = "حذف"; del.setAttribute("aria-label", "حذف " + l.name);
     del.innerHTML = '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>';
-    del.addEventListener("click", () => confirmDelete(wrap, l));
+    del.addEventListener("click", () => confirmDelete(scene, l));
     box.append(pic, del);
     return box;
   }
 
-  function confirmDelete(wrap, l) {
-    if (wrap.querySelector("[data-confirm]")) return;
-    const box = el("div", "absolute inset-0 z-20 rounded-3xl bg-white/95 dark:bg-[#12201d]/95 backdrop-blur ring-2 ring-rose-500 grid place-content-center gap-3 p-4 text-center");
+  function confirmDelete(scene, l) {
+    if (scene.querySelector("[data-confirm]")) return;
+    const box = el("div", "clay absolute inset-0 z-30 rounded-[28px] grid place-content-center gap-4 p-4 text-center");
     box.dataset.confirm = "";
-    box.append(el("p", "font-display font-semibold", "حذف «" + l.name + "»؟"));
+    box.append(el("p", "font-display font-semibold text-lg", "حذف «" + l.name + "»؟"));
     const row = el("div", "flex gap-2 justify-center");
-    const yes = el("button", "rounded-full bg-rose-600 hover:bg-rose-700 text-white px-4 py-1.5 text-sm", "حذف");
-    const no = el("button", "rounded-full bg-stone-100 dark:bg-white/10 px-4 py-1.5 text-sm", "إلغاء");
+    const yes = el("button", "btn3d rounded-full bg-rose-500 text-white px-5 py-2 text-sm", "حذف");
+    yes.style.setProperty("--btn-edge", "#c2414f");
+    const no = el("button", "btn3d rounded-full px-5 py-2 text-sm text-ink", "إلغاء");
+    no.style.setProperty("--btn-edge", "var(--edge)"); no.style.background = "var(--field)";
     yes.type = no.type = "button";
     yes.onclick = () => { links = links.filter((x) => x.id !== l.id); save(); render(); };
     no.onclick = () => box.remove();
-    row.append(yes, no); box.append(row); wrap.append(box); no.focus();
+    row.append(yes, no); box.append(row); scene.append(box); no.focus();
   }
 
   function render() {
@@ -358,8 +483,9 @@
       for (const d of data) {
         if (!d || typeof d.name !== "string" || typeof d.url !== "string") continue;
         const u = normalize(d.url); if (!u || have.has(u)) continue;
-        links.push({ id: "l" + Date.now() + Math.random().toString(36).slice(2, 6), name: d.name, url: u, createdAt: d.createdAt || Date.now(), ...(typeof d.img === "string" && d.img.startsWith("data:image/") ? { img: d.img } : {}) });
-        have.add(u); added++;
+        const item = { id: "l" + Date.now() + Math.random().toString(36).slice(2, 6), name: d.name, url: u, createdAt: d.createdAt || Date.now() };
+        if (typeof d.img === "string" && d.img.startsWith("data:image/")) item.img = d.img;
+        links.push(item); have.add(u); added++;
       }
       save(); render();
       $("note").textContent = added ? "تم استيراد " + ar(added) + " موقع." : "لا توجد مواقع جديدة في الملف.";
