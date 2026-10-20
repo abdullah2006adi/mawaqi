@@ -391,7 +391,7 @@
   function imgSrc(path) {
     if (!path) return "";
     if (path.startsWith("data:")) return path;
-    return imgCache[path] || path;
+    return imgCache[path] || RAW + path;
   }
 
   // ---------- reading ----------
@@ -403,10 +403,18 @@
         const j = await ghGet(FILE);
         list = j ? parseSites(b64decode(j.content)) : [];
       } else {
-        const r = await fetch(FILE + "?t=" + Date.now(), { cache: "no-store" });
-        if (r.status === 404) list = [];
-        else if (!r.ok) throw ghError(r.status);
-        else list = parseSites(await r.text());
+        // read straight from the repository (no key needed, always up to date)
+        let r = null;
+        try { r = await fetch(`${API}/contents/${FILE}?ref=${BRANCH}`, { headers: { Accept: "application/vnd.github+json" }, cache: "no-store" }); } catch (e) {}
+        if (r && r.ok) list = parseSites(b64decode((await r.json()).content));
+        else if (r && r.status === 404) list = [];
+        else {
+          // fallback: the published copy of the site
+          const p = await fetch(FILE + "?t=" + Date.now(), { cache: "no-store" });
+          if (p.status === 404) list = [];
+          else if (!p.ok) throw ghError(p.status);
+          else list = parseSites(await p.text());
+        }
       }
       sites = list; cacheSites();
       if (token && syncState !== "saving") setSync("ok");
@@ -429,7 +437,7 @@
       error: '<svg class="w-4 h-4 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 8v5M12 16.5v.5"/><circle cx="12" cy="12" r="9"/></svg>',
     };
     icon.innerHTML = svg[state] || svg.off;
-    text.textContent = { ok: "متزامن", saving: "جارٍ الحفظ…", off: "اربط هذا الجهاز", error: "خطأ في الحفظ" }[state] || "";
+    text.textContent = { ok: "متزامن", saving: "جارٍ الحفظ…", off: "عرض فقط", error: "خطأ في الحفظ" }[state] || "";
     text.className = state === "error" ? "text-rose-500" : "text-soft";
     if (state === "error" && message) showMsg(message);
     if (state === "ok") showMsg("");
@@ -443,7 +451,7 @@
       st.textContent = syncState === "error" ? "هذا الجهاز مربوط، لكن آخر حفظ لم ينجح." : "هذا الجهاز مربوط. أي تعديل هنا يظهر في كل أجهزتك.";
       st.className = "mt-2 text-sm " + (syncState === "error" ? "text-rose-500" : "text-teal");
     } else {
-      st.textContent = "هذا الجهاز غير مربوط: يعرض المواقع فقط ولا يستطيع تعديلها. أدخل المفتاح مرة واحدة لتتمكن من الإضافة والترتيب من هنا.";
+      st.textContent = "هذا الجهاز يعرض مواقعك محدّثة دائماً دون مفتاح. المفتاح تحتاجه فقط إن أردت الإضافة أو الترتيب أو الحذف من هذا الجهاز.";
       st.className = "mt-2 text-sm text-soft";
     }
     $("removeToken").classList.toggle("hidden", !token);
@@ -589,7 +597,7 @@
     if (l.img) {
       const pic = el("img", "absolute inset-0 w-full h-full object-cover");
       pic.alt = ""; pic.draggable = false;
-      pic.onerror = () => { if (!pic.dataset.fb && !l.img.startsWith("data:")) { pic.dataset.fb = "1"; pic.src = RAW + l.img; } };
+      pic.onerror = () => { if (!pic.dataset.fb && !l.img.startsWith("data:")) { pic.dataset.fb = "1"; pic.src = l.img; } };
       pic.src = imgSrc(l.img);
       face.append(pic, el("div", "absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent"));
       a.append(face);
@@ -694,7 +702,7 @@
     const dragOn = editable && !q && !!sortable;
     if (sortable) sortable.option("disabled", !dragOn);
     grid.classList.toggle("sorting", dragOn);
-    $("dragHint").textContent = !canEdit() ? "هذا الجهاز للعرض فقط. اربطه من زر المزامنة لتتمكن من التعديل."
+    $("dragHint").textContent = !canEdit() ? ""
       : q ? "امسح البحث لتتمكن من ترتيب المربعات."
       : "اسحب أي مربع بالماوس لتغيير مكانه.";
   }
