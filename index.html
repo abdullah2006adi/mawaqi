@@ -19,33 +19,21 @@
           body: ['Tajawal', '"Readex Pro"', 'Tahoma', 'sans-serif'],
         },
         colors: {
-          page: 'var(--page)',
-          panel: 'var(--panel)',
-          field: 'var(--field)',
-          ink: 'var(--ink)',
-          soft: 'var(--soft)',
-          line: 'var(--line)',
-          teal: 'var(--teal)',
-          tealdeep: 'var(--teal-deep)',
+          page: 'var(--page)', panel: 'var(--panel)', field: 'var(--field)',
+          ink: 'var(--ink)', soft: 'var(--soft)', line: 'var(--line)',
+          teal: 'var(--teal)', tealdeep: 'var(--teal-deep)',
         },
       },
     },
   };
 </script>
 <style>
-  /* Calm palette: mint + sky, soft teal accent. Raised "clay" 3D surfaces. */
   :root {
-    --page: #eef5f3;
-    --page2: #e9f0fa;
-    --panel: rgba(255,255,255,.78);
-    --field: #f3f7f6;
-    --ink: #24343f;
-    --soft: #6a7c86;
-    --line: rgba(36,52,63,.10);
-    --teal: #4fa89c;
-    --teal-deep: #3a877c;
-    --edge: rgba(36,52,63,.10);
-    --shadow: rgba(40,80,90,.22);
+    --page: #eef5f3; --page2: #e9f0fa;
+    --panel: rgba(255,255,255,.78); --field: #f3f7f6;
+    --ink: #24343f; --soft: #6a7c86; --line: rgba(36,52,63,.10);
+    --teal: #4fa89c; --teal-deep: #3a877c;
+    --edge: rgba(36,52,63,.10); --shadow: rgba(40,80,90,.22);
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -61,80 +49,54 @@
       radial-gradient(1200px 600px at 85% -10%, var(--page2), transparent 60%),
       radial-gradient(900px 500px at 0% 100%, var(--page2), transparent 60%),
       var(--page);
-    color: var(--ink);
-    min-height: 100vh;
+    color: var(--ink); min-height: 100vh;
   }
-
-  /* floating 3D spheres in the background */
-  .orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; filter: saturate(.9);
-    animation: float 14s ease-in-out infinite; }
-  .orb-a { width: 220px; height: 220px; top: 60px; left: 6%;
-    background: radial-gradient(circle at 32% 28%, #ffffff, #bfe6df 38%, #7cc4b8 75%, #5aa99d); opacity: .55; }
-  .orb-b { width: 130px; height: 130px; top: 340px; right: 4%; animation-delay: -5s;
-    background: radial-gradient(circle at 32% 28%, #ffffff, #cfdcf6 40%, #96b1e6 78%, #7b97d3); opacity: .5; }
-  .orb-c { width: 90px; height: 90px; bottom: 80px; left: 40%; animation-delay: -9s;
-    background: radial-gradient(circle at 32% 28%, #ffffff, #f6e2cf 40%, #e8bf98 80%); opacity: .45; }
+  .orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; animation: float 14s ease-in-out infinite; }
+  .orb-a { width: 220px; height: 220px; top: 60px; left: 6%; background: radial-gradient(circle at 32% 28%, #fff, #bfe6df 38%, #7cc4b8 75%, #5aa99d); opacity: .55; }
+  .orb-b { width: 130px; height: 130px; top: 340px; right: 4%; animation-delay: -5s; background: radial-gradient(circle at 32% 28%, #fff, #cfdcf6 40%, #96b1e6 78%, #7b97d3); opacity: .5; }
+  .orb-c { width: 90px; height: 90px; bottom: 80px; left: 40%; animation-delay: -9s; background: radial-gradient(circle at 32% 28%, #fff, #f6e2cf 40%, #e8bf98 80%); opacity: .45; }
   @keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-22px) } }
 
-  /* raised panel */
   .clay {
     background: var(--panel);
     backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.7),
-      0 1px 0 var(--edge), 0 2px 0 var(--edge), 0 3px 0 var(--edge),
-      0 18px 40px -18px var(--shadow);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 1px 0 var(--edge), 0 2px 0 var(--edge), 0 3px 0 var(--edge), 0 18px 40px -18px var(--shadow);
   }
   @media (prefers-color-scheme: dark) { .clay { box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 1px 0 var(--edge), 0 2px 0 var(--edge), 0 3px 0 var(--edge), 0 18px 40px -18px var(--shadow); } }
 
-  /* 3D push button */
-  .btn3d {
-    transition: transform .12s ease, box-shadow .12s ease, filter .15s;
-    box-shadow: 0 5px 0 var(--btn-edge), 0 12px 20px -10px var(--shadow);
-  }
+  .btn3d { transition: transform .12s ease, box-shadow .12s ease, filter .15s; box-shadow: 0 5px 0 var(--btn-edge), 0 12px 20px -10px var(--shadow); }
   .btn3d:hover { filter: brightness(1.05); }
   .btn3d:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--btn-edge), 0 4px 8px -6px var(--shadow); }
+  .btn3d:disabled { opacity: .6; cursor: progress; }
 
-  /* tiles */
   .scene { perspective: 900px; }
   .tile {
     position: relative; aspect-ratio: 1 / 1; border-radius: 28px;
     transform-style: preserve-3d;
     transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
     transition: transform .25s ease, box-shadow .25s ease;
-    box-shadow:
-      0 1px 0 var(--tile-edge), 0 2px 0 var(--tile-edge), 0 3px 0 var(--tile-edge),
-      0 4px 0 var(--tile-edge), 0 5px 0 var(--tile-edge), 0 6px 0 var(--tile-edge),
-      0 22px 34px -14px var(--shadow);
+    box-shadow: 0 1px 0 var(--tile-edge), 0 2px 0 var(--tile-edge), 0 3px 0 var(--tile-edge), 0 4px 0 var(--tile-edge), 0 5px 0 var(--tile-edge), 0 6px 0 var(--tile-edge), 0 22px 34px -14px var(--shadow);
   }
   .scene:hover .tile {
-    box-shadow:
-      0 1px 0 var(--tile-edge), 0 2px 0 var(--tile-edge), 0 3px 0 var(--tile-edge),
-      0 4px 0 var(--tile-edge), 0 5px 0 var(--tile-edge), 0 6px 0 var(--tile-edge),
-      0 7px 0 var(--tile-edge), 0 8px 0 var(--tile-edge),
-      0 36px 48px -18px var(--shadow);
+    box-shadow: 0 1px 0 var(--tile-edge), 0 2px 0 var(--tile-edge), 0 3px 0 var(--tile-edge), 0 4px 0 var(--tile-edge), 0 5px 0 var(--tile-edge), 0 6px 0 var(--tile-edge), 0 7px 0 var(--tile-edge), 0 8px 0 var(--tile-edge), 0 36px 48px -18px var(--shadow);
   }
   .tile-face { position: absolute; inset: 0; border-radius: 28px; overflow: hidden; }
-  .tile-face::after { /* top bevel highlight */
-    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-    box-shadow: inset 0 2px 0 rgba(255,255,255,.55), inset 0 -2px 0 rgba(0,0,0,.06);
-  }
-  .glare { position: absolute; inset: 0; border-radius: 28px; pointer-events: none; opacity: 0; transition: opacity .25s;
-    background: radial-gradient(circle at var(--gx, 50%) var(--gy, 0%), rgba(255,255,255,.45), transparent 55%); }
+  .tile-face::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; box-shadow: inset 0 2px 0 rgba(255,255,255,.55), inset 0 -2px 0 rgba(0,0,0,.06); }
+  .glare { position: absolute; inset: 0; border-radius: 28px; pointer-events: none; opacity: 0; transition: opacity .25s; background: radial-gradient(circle at var(--gx, 50%) var(--gy, 0%), rgba(255,255,255,.45), transparent 55%); }
   .scene:hover .glare { opacity: 1; }
   .pop-z { transform: translateZ(46px); }
   .pop-z2 { transform: translateZ(30px); }
-  /* drag & drop */
+
   .sortable-ghost { opacity: .35; }
   .sortable-ghost .tile { box-shadow: none !important; outline: 3px dashed var(--teal); outline-offset: 4px; }
-  .sortable-chosen .tile { cursor: grabbing; }
   .sortable-drag .tile { transform: rotate(-3deg) scale(1.04) !important; }
   #grid.sorting .tile { cursor: grab; }
-  .clamp2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
+  .clamp2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   @keyframes rise { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: none } }
   .rise { animation: rise .45s cubic-bezier(.2,.8,.2,1) both; }
-
+  @keyframes spin { to { transform: rotate(360deg) } }
+  .spin { animation: spin 1s linear infinite; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
     .tile { transform: none !important; }
@@ -156,11 +118,23 @@
         <h1 class="font-display font-bold text-5xl sm:text-6xl mt-1 tracking-tight"
             style="text-shadow: 0 1px 0 rgba(255,255,255,.6), 0 3px 0 var(--edge), 0 10px 24px var(--shadow);">مواقعي</h1>
       </div>
-      <div class="clay rounded-full px-5 py-2.5 text-sm flex items-center gap-2">
-        <span class="w-2.5 h-2.5 rounded-full bg-teal"></span>
-        <span id="count" class="tabular-nums text-soft">لا توجد مواقع</span>
+      <div class="flex flex-wrap items-center gap-2">
+        <div class="clay rounded-full px-5 py-2.5 text-sm flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-teal"></span>
+          <span id="count" class="tabular-nums text-soft">لا توجد مواقع</span>
+        </div>
+        <button id="syncBtn" type="button" class="clay rounded-full px-4 py-2.5 text-sm flex items-center gap-2 hover:ring-2 hover:ring-teal transition focus:outline-none focus-visible:ring-2 focus-visible:ring-teal">
+          <span id="syncIcon" class="grid place-items-center w-4 h-4"></span>
+          <span id="syncText" class="text-soft">…</span>
+        </button>
       </div>
     </header>
+
+    <!-- Migration banner -->
+    <div id="banner" class="hidden clay rounded-[24px] p-4 sm:p-5 mb-6 flex flex-wrap items-center justify-between gap-3 ring-2 ring-teal/40">
+      <p id="bannerText" class="min-w-0"></p>
+      <button id="bannerBtn" type="button" class="btn3d rounded-2xl px-6 py-2.5 font-display font-semibold text-white bg-teal" style="--btn-edge: var(--teal-deep);"></button>
+    </div>
 
     <!-- Add form -->
     <form id="addForm" novalidate class="clay rounded-[28px] p-5 sm:p-6">
@@ -179,13 +153,13 @@
         </label>
         <div class="flex gap-3">
           <button type="button" id="imgBtn"
-            class="btn3d flex-1 lg:flex-none h-[52px] inline-flex items-center justify-center gap-2 rounded-2xl px-5 font-display font-medium bg-panel text-ink ring-1 ring-line focus:outline-none focus-visible:ring-2 focus-visible:ring-teal"
+            class="btn3d flex-1 lg:flex-none h-[52px] inline-flex items-center justify-center gap-2 rounded-2xl px-5 font-display font-medium text-ink ring-1 ring-line focus:outline-none focus-visible:ring-2 focus-visible:ring-teal"
             style="--btn-edge: var(--edge); background: var(--field);">
             <img id="imgPreview" alt="" class="hidden w-8 h-8 rounded-lg object-cover">
             <svg id="imgIcon" class="w-5 h-5 text-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
             <span id="imgLabel">صورة</span>
           </button>
-          <button type="submit"
+          <button type="submit" id="addBtn"
             class="btn3d flex-1 lg:flex-none h-[52px] rounded-2xl px-9 font-display font-semibold text-white bg-teal focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-teal"
             style="--btn-edge: var(--teal-deep);">
             إدخال
@@ -198,7 +172,10 @@
 
     <!-- Toolbar -->
     <div id="toolbar" class="hidden mt-12 mb-6 flex flex-wrap items-center justify-between gap-3">
-      <div><h2 class="font-display font-semibold text-2xl">المواقع</h2><p id="dragHint" class="text-soft text-sm mt-0.5">اسحب أي مربع بالماوس لتغيير مكانه.</p></div>
+      <div>
+        <h2 class="font-display font-semibold text-2xl">المواقع</h2>
+        <p id="dragHint" class="text-soft text-sm mt-0.5"></p>
+      </div>
       <div class="relative w-full sm:w-80">
         <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input id="search" type="search" placeholder="ابحث في مواقعك…"
@@ -206,70 +183,118 @@
       </div>
     </div>
 
-    <!-- Grid -->
     <div id="grid" class="grid gap-6 sm:gap-8 grid-cols-2 md:grid-cols-3 xl:grid-cols-4"></div>
 
-    <!-- Empty -->
+    <div id="loading" class="mt-12 text-center text-soft">جارٍ تحميل المواقع…</div>
     <div id="empty" class="hidden mt-12 clay rounded-[28px] py-16 px-6 text-center">
-      <div class="mx-auto w-16 h-16 grid place-items-center rounded-2xl bg-teal text-white mb-4"
-           style="box-shadow: 0 5px 0 var(--teal-deep), 0 14px 24px -10px var(--shadow);">
+      <div class="mx-auto w-16 h-16 grid place-items-center rounded-2xl bg-teal text-white mb-4" style="box-shadow: 0 5px 0 var(--teal-deep), 0 14px 24px -10px var(--shadow);">
         <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
       </div>
       <p class="font-display font-semibold text-xl">لا توجد مواقع بعد</p>
       <p class="text-soft mt-1">اكتب اسم الموقع ورابطه في الأعلى، واختر له صورة إن شئت، ثم اضغط «إدخال».</p>
     </div>
     <p id="noResults" class="hidden text-center text-soft py-12">لا توجد نتائج مطابقة.</p>
+  </div>
 
-    <!-- Backup -->
-    <footer class="mt-16 flex flex-wrap items-center gap-3 text-sm">
-      <button id="exportBtn" type="button" class="btn3d inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-ink ring-1 ring-line" style="--btn-edge: var(--edge); background: var(--field);">
-        <svg class="w-4 h-4 text-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg>
-        حفظ نسخة احتياطية
-      </button>
-      <button id="importBtn" type="button" class="btn3d inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-ink ring-1 ring-line" style="--btn-edge: var(--edge); background: var(--field);">
-        <svg class="w-4 h-4 text-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 21V9m0 0-4 4m4-4 4 4M5 3h14"/></svg>
-        استيراد نسخة
-      </button>
-      <input id="importFile" type="file" accept="application/json,.json" class="hidden">
-      <p id="note" class="basis-full text-soft mt-1">المواقع محفوظة في هذا المتصفح. لنقلها إلى جهاز آخر احفظ نسخة احتياطية ثم استوردها هناك.</p>
-    </footer>
+  <!-- Sync settings -->
+  <div id="settings" class="hidden fixed inset-0 z-50 grid place-items-center p-4 bg-black/30 backdrop-blur-sm">
+    <div class="clay w-full max-w-lg rounded-[28px] p-6 max-h-[90vh] overflow-y-auto" style="background: var(--field);">
+      <div class="flex items-start justify-between gap-3">
+        <h2 class="font-display font-semibold text-xl">المزامنة مع GitHub</h2>
+        <button id="closeSettings" type="button" class="grid place-items-center w-9 h-9 rounded-full hover:bg-black/5" aria-label="إغلاق">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+      <p id="setStatus" class="mt-2 text-sm"></p>
+
+      <label class="block mt-5">
+        <span class="text-sm text-soft">مفتاح GitHub</span>
+        <input id="tokenInput" type="password" dir="ltr" autocomplete="off" spellcheck="false" placeholder="github_pat_…"
+          class="mt-1.5 w-full rounded-2xl border-0 bg-white/70 dark:bg-white/5 px-4 py-3 text-left text-ink outline-none ring-2 ring-transparent focus:ring-teal">
+      </label>
+      <div class="mt-4 flex flex-wrap gap-3">
+        <button id="saveToken" type="button" class="btn3d rounded-2xl px-6 py-2.5 font-display font-semibold text-white bg-teal" style="--btn-edge: var(--teal-deep);">ربط هذا الجهاز</button>
+        <button id="removeToken" type="button" class="btn3d hidden rounded-2xl px-5 py-2.5 text-sm text-ink ring-1 ring-line" style="--btn-edge: var(--edge); background: var(--panel);">إزالة المفتاح من هذا الجهاز</button>
+      </div>
+      <p id="setMsg" role="alert" class="hidden mt-3 text-sm"></p>
+
+      <details class="mt-6 text-sm text-soft">
+        <summary class="cursor-pointer font-medium text-ink">كيف أحصل على المفتاح؟</summary>
+        <ol class="list-decimal pr-5 mt-3 space-y-1.5 leading-relaxed">
+          <li>افتح <a class="text-teal underline" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">صفحة إنشاء المفتاح في GitHub</a>.</li>
+          <li>في <b>Token name</b> اكتب: <span dir="ltr">mawaqi</span>، وفي <b>Expiration</b> اختر أطول مدة.</li>
+          <li>في <b>Repository access</b> اختر <b>Only select repositories</b> ثم اختر <b dir="ltr">mawaqi</b>.</li>
+          <li>في <b>Permissions</b> افتح <b>Repository permissions</b>، وعند <b>Contents</b> اختر <b>Read and write</b>.</li>
+          <li>اضغط <b>Generate token</b>، وانسخ المفتاح والصقه هنا.</li>
+        </ol>
+        <p class="mt-3">المفتاح يُحفظ في هذا المتصفح فقط، ولا يستطيع إلا تعديل مستودع mawaqi.</p>
+      </details>
+    </div>
   </div>
 
 <script>
 (function () {
   const $ = (id) => document.getElementById(id);
-  const LS_KEY = "my-sites-v1";
-  let links = load();
-  let justDragged = false;
-  // give every site an order (older pages saved none)
-  links.sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || (a.createdAt || 0) - (b.createdAt || 0));
-  links.forEach((l, i) => { l.order = i; });
+
+  // ---------- where the data lives ----------
+  let OWNER = "abdullah2006adi", REPO = "mawaqi";
+  if (/\.github\.io$/i.test(location.hostname)) {
+    OWNER = location.hostname.split(".")[0];
+    const seg = location.pathname.split("/").filter(Boolean)[0];
+    if (seg && !/\.html?$/i.test(seg)) REPO = seg;
+  }
+  const BRANCH = "main", FILE = "sites.json";
+  const API = `https://api.github.com/repos/${OWNER}/${REPO}`;
+  const RAW = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/`;
+
+  const K_TOKEN = "mawaqi-token", K_CACHE = "mawaqi-cache", K_IMG = "mawaqi-imgcache", K_LEGACY = "my-sites-v1";
+
+  const ls = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } },
+    raw(k) { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } },
+    setRaw(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+    del(k) { try { localStorage.removeItem(k); } catch (e) {} },
+  };
+
+  let token = ls.raw(K_TOKEN);
+  let sites = ls.get(K_CACHE, []);
+  let imgCache = ls.get(K_IMG, {});
+  let legacy = (ls.get(K_LEGACY, []) || []).filter((l) => l && l.name && l.url);
+  let loaded = false;
   let query = "";
   let pendingImg = null;
   let changeTarget = null;
+  let justDragged = false;
+  let showingLegacy = false;
   const canTilt = window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
                   !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const canEdit = () => !!token;
 
   try {
     $("hijri").textContent = new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura",
       { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date());
   } catch (e) {}
 
-  // soft, eye-friendly tile palettes: [light, mid, icon colour, edge]
-  const palettes = [
-    ["#e3f4ef", "#bfe3d9", "#3a877c", "#a6cfc4"],  // mint
-    ["#e4ecfb", "#c3d4f3", "#4a6db3", "#aabfe6"],  // sky
-    ["#efe6f8", "#d8c7ef", "#7556a6", "#c3afe2"],  // lavender
-    ["#fbece1", "#f3d3bb", "#b0693a", "#e6bfa1"],  // peach
-    ["#eaf2e2", "#cfe2bd", "#5b8a3c", "#b8d3a1"],  // sage
-    ["#f8e6ea", "#efc8d1", "#a8506a", "#e2b0bd"],  // rose
-    ["#f6f0dd", "#e9dbb0", "#8f7428", "#d8c793"],  // sand
-    ["#dff2f6", "#b8e1ea", "#2f8299", "#a0d0dc"],  // aqua
-  ];
-  function paletteFor(s) {
-    let h = 0; for (const c of s) h = (h * 31 + c.codePointAt(0)) >>> 0;
-    return palettes[h % palettes.length];
+  // ---------- helpers ----------
+  function b64encode(str) {
+    const bytes = new TextEncoder().encode(str);
+    let bin = "";
+    for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+    return btoa(bin);
   }
+  function b64decode(b64) {
+    const bin = atob((b64 || "").replace(/\s/g, ""));
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+  function parseSites(text) {
+    const j = JSON.parse(text);
+    const arr = Array.isArray(j) ? j : (j && j.sites) || [];
+    return arr.filter((s) => s && typeof s.name === "string" && typeof s.url === "string" && s.id);
+  }
+  function newId() { return "s" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
   function normalize(raw) {
     let u = (raw || "").trim();
     if (!u) return null;
@@ -282,15 +307,234 @@
   }
   function hostOf(u) { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return u; } }
   function ar(n) { return n.toLocaleString("ar-EG"); }
-  function load() { try { return JSON.parse(localStorage.getItem(LS_KEY) || "[]"); } catch (e) { return []; } }
-  function save() {
-    try { localStorage.setItem(LS_KEY, JSON.stringify(links)); return true; }
-    catch (e) { showMsg("لا توجد مساحة كافية للحفظ. احذف بعض الصور أو استعمل صوراً أصغر."); return false; }
-  }
-  function showMsg(t) { const m = $("msg"); m.textContent = t; m.classList.toggle("hidden", !t); }
   function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function showMsg(t) { const m = $("msg"); m.textContent = t; m.classList.toggle("hidden", !t); }
 
-  // read an image, crop it to a centred square, shrink to 600×600
+  // ---------- GitHub API ----------
+  function headers() {
+    return { Accept: "application/vnd.github+json", Authorization: "Bearer " + token, "Content-Type": "application/json" };
+  }
+  function ghError(status) {
+    const e = new Error("gh " + status); e.status = status; return e;
+  }
+  async function ghGet(path) {
+    const r = await fetch(`${API}/contents/${path}?ref=${BRANCH}`, { headers: headers(), cache: "no-store" });
+    if (r.status === 404) return null;
+    if (!r.ok) throw ghError(r.status);
+    return r.json();
+  }
+  async function ghPut(path, b64, sha, message) {
+    const body = { message, content: b64, branch: BRANCH };
+    if (sha) body.sha = sha;
+    const r = await fetch(`${API}/contents/${path}`, { method: "PUT", headers: headers(), body: JSON.stringify(body) });
+    if (!r.ok) throw ghError(r.status);
+    return r.json();
+  }
+  async function ghDelete(path, sha, message) {
+    const r = await fetch(`${API}/contents/${path}`, { method: "DELETE", headers: headers(), body: JSON.stringify({ message, sha, branch: BRANCH }) });
+    if (!r.ok && r.status !== 404) throw ghError(r.status);
+  }
+  function explain(e) {
+    const s = e && e.status;
+    if (s === 401) return "المفتاح غير صحيح أو انتهت صلاحيته. أدخل مفتاحاً جديداً من زر المزامنة.";
+    if (s === 403 || s === 404) return "المفتاح لا يملك صلاحية الكتابة على مستودع mawaqi. أنشئ مفتاحاً يختار المستودع mawaqi مع Contents: Read and write.";
+    if (s === 422 || s === 409) return "تغيّرت البيانات من جهاز آخر في اللحظة نفسها. حدّث الصفحة وحاول مرة أخرى.";
+    if (s >= 500) return "خدمة GitHub لا تستجيب الآن. حاول بعد قليل.";
+    return "تعذر الاتصال بـ GitHub. تحقق من الإنترنت ثم حاول مرة أخرى.";
+  }
+
+  // one write at a time
+  let queue = Promise.resolve();
+  let pending = 0;
+  function enqueue(fn) {
+    pending++; setSync("saving");
+    const p = queue.then(fn);
+    queue = p.catch(() => {}).then(() => { pending--; if (pending === 0 && syncState === "saving") setSync("ok"); });
+    return p;
+  }
+
+  // apply a change to the latest copy on GitHub and save it
+  function commit(mutate, message) {
+    sites = mutate(sites.slice()); cacheSites(); render(); // show it straight away
+    return enqueue(async () => {
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const j = await ghGet(FILE);
+        const cur = j ? parseSites(b64decode(j.content)) : [];
+        const next = mutate(cur);
+        try {
+          await ghPut(FILE, b64encode(JSON.stringify({ version: 1, sites: next }, null, 2)), j && j.sha, message);
+          sites = next; cacheSites(); render();
+          return true;
+        } catch (e) {
+          if ((e.status === 409 || e.status === 422) && attempt < 2) continue;
+          throw e;
+        }
+      }
+    }).catch((e) => { setSync("error", explain(e)); pull(); throw e; });
+  }
+
+  async function uploadImage(dataUrl) {
+    const path = "img/" + newId() + ".jpg";
+    await enqueue(() => ghPut(path, dataUrl.split(",")[1], null, "صورة موقع"));
+    imgCache[path] = dataUrl;
+    if (!ls.set(K_IMG, imgCache)) { imgCache = { [path]: dataUrl }; ls.set(K_IMG, imgCache); }
+    return path;
+  }
+  function deleteImage(path) {
+    if (!path || !path.startsWith("img/")) return;
+    enqueue(async () => {
+      const j = await ghGet(path);
+      if (j && j.sha) await ghDelete(path, j.sha, "حذف صورة");
+    }).catch(() => {});
+    delete imgCache[path]; ls.set(K_IMG, imgCache);
+  }
+  function imgSrc(path) {
+    if (!path) return "";
+    if (path.startsWith("data:")) return path;
+    return imgCache[path] || path;
+  }
+
+  // ---------- reading ----------
+  function cacheSites() { ls.set(K_CACHE, sites); }
+  async function pull() {
+    try {
+      let list;
+      if (token) {
+        const j = await ghGet(FILE);
+        list = j ? parseSites(b64decode(j.content)) : [];
+      } else {
+        const r = await fetch(FILE + "?t=" + Date.now(), { cache: "no-store" });
+        if (r.status === 404) list = [];
+        else if (!r.ok) throw ghError(r.status);
+        else list = parseSites(await r.text());
+      }
+      sites = list; cacheSites();
+      if (token && syncState !== "saving") setSync("ok");
+    } catch (e) {
+      if (token) setSync("error", explain(e));
+    }
+    loaded = true;
+    render(); updateBanner();
+  }
+
+  // ---------- sync status ----------
+  let syncState = "";
+  function setSync(state, message) {
+    syncState = state;
+    const icon = $("syncIcon"), text = $("syncText");
+    const svg = {
+      ok: '<svg class="w-4 h-4 text-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+      saving: '<svg class="w-4 h-4 text-teal spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.2-8.6"/></svg>',
+      off: '<svg class="w-4 h-4 text-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19a4.5 4.5 0 1 0-1.4-8.8A6 6 0 0 0 4.5 13 3.5 3.5 0 0 0 6.5 19z"/></svg>',
+      error: '<svg class="w-4 h-4 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 8v5M12 16.5v.5"/><circle cx="12" cy="12" r="9"/></svg>',
+    };
+    icon.innerHTML = svg[state] || svg.off;
+    text.textContent = { ok: "متزامن", saving: "جارٍ الحفظ…", off: "اربط هذا الجهاز", error: "خطأ في الحفظ" }[state] || "";
+    text.className = state === "error" ? "text-rose-500" : "text-soft";
+    if (state === "error" && message) showMsg(message);
+    if (state === "ok") showMsg("");
+    refreshSettings();
+  }
+
+  // ---------- settings ----------
+  function refreshSettings() {
+    const st = $("setStatus");
+    if (token) {
+      st.textContent = syncState === "error" ? "هذا الجهاز مربوط، لكن آخر حفظ لم ينجح." : "هذا الجهاز مربوط. أي تعديل هنا يظهر في كل أجهزتك.";
+      st.className = "mt-2 text-sm " + (syncState === "error" ? "text-rose-500" : "text-teal");
+    } else {
+      st.textContent = "هذا الجهاز غير مربوط: يعرض المواقع فقط ولا يستطيع تعديلها. أدخل المفتاح مرة واحدة لتتمكن من الإضافة والترتيب من هنا.";
+      st.className = "mt-2 text-sm text-soft";
+    }
+    $("removeToken").classList.toggle("hidden", !token);
+    $("saveToken").textContent = token ? "تحديث المفتاح" : "ربط هذا الجهاز";
+  }
+  function openSettings() { refreshSettings(); setMsgS(""); $("settings").classList.remove("hidden"); setTimeout(() => $("tokenInput").focus(), 50); }
+  function closeSettings() { $("settings").classList.add("hidden"); }
+  function setMsgS(t, ok) { const m = $("setMsg"); m.textContent = t; m.className = "mt-3 text-sm " + (ok ? "text-teal" : "text-rose-500") + (t ? "" : " hidden"); }
+
+  $("syncBtn").addEventListener("click", openSettings);
+  $("closeSettings").addEventListener("click", closeSettings);
+  $("settings").addEventListener("click", (e) => { if (e.target === $("settings")) closeSettings(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSettings(); });
+
+  $("saveToken").addEventListener("click", async () => {
+    const t = $("tokenInput").value.trim();
+    if (!t) { setMsgS("الصق المفتاح أولاً."); return; }
+    $("saveToken").disabled = true; setMsgS("جارٍ التحقق…", true);
+    try {
+      const r = await fetch(API, { headers: { Accept: "application/vnd.github+json", Authorization: "Bearer " + t }, cache: "no-store" });
+      if (r.status === 401) throw ghError(401);
+      if (!r.ok) throw ghError(r.status);
+      const info = await r.json();
+      if (info.permissions && info.permissions.push === false) throw ghError(403);
+      token = t; ls.setRaw(K_TOKEN, t);
+      $("tokenInput").value = "";
+      setMsgS("تم الربط بنجاح.", true);
+      setSync("ok");
+      await pull();
+      setTimeout(closeSettings, 700);
+    } catch (e) {
+      setMsgS(e.status === 401 ? "المفتاح غير صحيح. انسخه كاملاً وحاول مرة أخرى."
+        : e.status === 404 || e.status === 403 ? "المفتاح لا يصل إلى مستودع mawaqi. عند إنشائه اختر المستودع mawaqi."
+        : "تعذر الاتصال بـ GitHub. تحقق من الإنترنت.");
+    }
+    $("saveToken").disabled = false;
+  });
+  $("removeToken").addEventListener("click", () => {
+    token = ""; ls.del(K_TOKEN);
+    setSync("off"); setMsgS("أُزيل المفتاح من هذا الجهاز.", true);
+    render(); updateBanner();
+  });
+
+  // ---------- old sites saved only in this browser ----------
+  function updateBanner() {
+    const remoteUrls = new Set(sites.map((s) => s.url));
+    const missing = legacy.filter((l) => !remoteUrls.has(normalize(l.url) || l.url));
+    showingLegacy = loaded && !token && sites.length === 0 && missing.length > 0;
+    const b = $("banner");
+    if (!loaded || missing.length === 0) { b.classList.add("hidden"); render(); return; }
+    b.classList.remove("hidden");
+    const n = missing.length;
+    const word = n === 1 ? "موقع واحد محفوظ" : n === 2 ? "موقعان محفوظان" : ar(n) + " مواقع محفوظة";
+    if (token) {
+      $("bannerText").textContent = `في هذا المتصفح ${word} لم تُرفع بعد. ارفعها لتظهر في كل أجهزتك.`;
+      $("bannerBtn").textContent = "رفع المواقع";
+      $("bannerBtn").onclick = () => migrate(missing);
+    } else {
+      $("bannerText").textContent = `في هذا المتصفح ${word} لا تظهر في أجهزتك الأخرى. اربط هذا الجهاز لرفعها.`;
+      $("bannerBtn").textContent = "ربط هذا الجهاز";
+      $("bannerBtn").onclick = openSettings;
+    }
+    render();
+  }
+  async function migrate(list) {
+    const btn = $("bannerBtn");
+    btn.disabled = true;
+    try {
+      list = list.slice().sort((a, b) => (a.order ?? 1e9) - (b.order ?? 1e9) || (a.createdAt || 0) - (b.createdAt || 0));
+      const items = [];
+      for (let i = 0; i < list.length; i++) {
+        btn.textContent = `جارٍ الرفع ${ar(i + 1)} من ${ar(list.length)}…`;
+        const l = list[i];
+        const item = { id: newId(), name: l.name, url: normalize(l.url) || l.url, createdAt: l.createdAt || Date.now() };
+        if (typeof l.img === "string" && l.img.startsWith("data:image/")) item.img = await uploadImage(l.img);
+        items.push(item);
+      }
+      await commit((cur) => {
+        const have = new Set(cur.map((s) => s.url));
+        return cur.concat(items.filter((s) => !have.has(s.url)));
+      }, "رفع المواقع المحفوظة");
+      ls.setRaw(K_LEGACY + "-backup", JSON.stringify(legacy));
+      ls.del(K_LEGACY); legacy = [];
+      updateBanner();
+    } catch (e) {
+      btn.textContent = "حاول مرة أخرى";
+    }
+    btn.disabled = false;
+  }
+
+  // ---------- images ----------
   function readImage(file, cb) {
     if (!file || !file.type.startsWith("image/")) { showMsg("اختر ملف صورة (JPG أو PNG)."); return; }
     const r = new FileReader();
@@ -298,13 +542,12 @@
       const im = new Image();
       im.onload = () => {
         const side = Math.min(im.width, im.height);
-        const sx = (im.width - side) / 2, sy = (im.height - side) / 2;
         const out = Math.min(600, side);
         const c = document.createElement("canvas");
         c.width = c.height = out;
         const ctx = c.getContext("2d");
         ctx.imageSmoothingQuality = "high";
-        ctx.drawImage(im, sx, sy, side, side, 0, 0, out, out);
+        ctx.drawImage(im, (im.width - side) / 2, (im.height - side) / 2, side, side, 0, 0, out, out);
         cb(c.toDataURL("image/jpeg", 0.85));
       };
       im.onerror = () => showMsg("تعذر قراءة الصورة. جرّب صورة أخرى.");
@@ -320,35 +563,48 @@
     $("imgLabel").textContent = d ? "تغيير" : "صورة";
   }
 
+  // ---------- tiles ----------
+  const palettes = [
+    ["#e3f4ef", "#bfe3d9", "#3a877c", "#a6cfc4"], ["#e4ecfb", "#c3d4f3", "#4a6db3", "#aabfe6"],
+    ["#efe6f8", "#d8c7ef", "#7556a6", "#c3afe2"], ["#fbece1", "#f3d3bb", "#b0693a", "#e6bfa1"],
+    ["#eaf2e2", "#cfe2bd", "#5b8a3c", "#b8d3a1"], ["#f8e6ea", "#efc8d1", "#a8506a", "#e2b0bd"],
+    ["#f6f0dd", "#e9dbb0", "#8f7428", "#d8c793"], ["#dff2f6", "#b8e1ea", "#2f8299", "#a0d0dc"],
+  ];
+  function paletteFor(s) { let h = 0; for (const c of s) h = (h * 31 + c.codePointAt(0)) >>> 0; return palettes[h % palettes.length]; }
   const arrowSvg = '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M17 7 7 17M8 7h9v9"/></svg>';
 
-  function card(l, i) {
+  function card(l, i, editable) {
     const [c1, c2, c3, edge] = paletteFor(l.name + l.url);
     const host = hostOf(l.url);
-
     const scene = el("div", "scene group relative rise");
     scene.style.animationDelay = Math.min(i * 50, 500) + "ms";
+    scene.dataset.id = l.id;
 
     const a = el("a", "tile block focus:outline-none focus-visible:ring-4 focus-visible:ring-teal");
-    a.href = l.url; a.target = "_blank"; a.rel = "noopener";
+    a.href = l.url; a.target = "_blank"; a.rel = "noopener"; a.draggable = false;
     a.style.setProperty("--tile-edge", l.img ? "rgba(36,52,63,.18)" : edge);
+    a.addEventListener("click", (e) => { if (justDragged) e.preventDefault(); });
 
     const face = el("div", "tile-face");
-
     if (l.img) {
       const pic = el("img", "absolute inset-0 w-full h-full object-cover");
-      pic.src = l.img; pic.alt = "";
-      face.append(pic);
+      pic.alt = ""; pic.draggable = false;
+      pic.onerror = () => { if (!pic.dataset.fb && !l.img.startsWith("data:")) { pic.dataset.fb = "1"; pic.src = RAW + l.img; } };
+      pic.src = imgSrc(l.img);
+      face.append(pic, el("div", "absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent"));
       a.append(face);
-      a.title = l.name;
-      a.setAttribute("aria-label", l.name);
+      const label = el("div", "pop-z absolute inset-x-3 bottom-3 flex items-center justify-between gap-2 rounded-2xl px-3.5 py-2.5 text-white");
+      label.style.background = "rgba(255,255,255,.18)";
+      label.style.backdropFilter = label.style.webkitBackdropFilter = "blur(10px)";
+      label.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,.35), 0 8px 18px -8px rgba(0,0,0,.45)";
+      label.append(el("h3", "min-w-0 font-display font-semibold text-base sm:text-lg leading-snug truncate", l.name));
+      const go = el("span", "shrink-0 grid place-items-center w-8 h-8 rounded-full bg-white/90 text-ink");
+      go.innerHTML = arrowSvg; label.append(go); a.append(label);
     } else {
       face.style.background = `linear-gradient(150deg, ${c1} 0%, ${c2} 100%)`;
       const blob = el("div", "absolute -top-10 -left-10 w-40 h-40 rounded-full");
       blob.style.background = "radial-gradient(circle, rgba(255,255,255,.6), transparent 70%)";
-      face.append(blob);
-      a.append(face);
-
+      face.append(blob); a.append(face);
       const inner = el("div", "absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 text-center");
       inner.style.transformStyle = "preserve-3d";
       const badge = el("div", "pop-z grid place-items-center w-20 h-20 sm:w-24 sm:h-24 rounded-[26px] bg-white");
@@ -356,21 +612,16 @@
       const letter = el("span", "font-display font-bold text-4xl", (l.name.trim()[0] || "؟"));
       letter.style.color = c3;
       const img = new Image();
-      img.alt = ""; img.className = "w-11 h-11 sm:w-12 sm:h-12 object-contain hidden";
-      img.referrerPolicy = "no-referrer";
+      img.alt = ""; img.className = "w-11 h-11 sm:w-12 sm:h-12 object-contain hidden"; img.referrerPolicy = "no-referrer"; img.draggable = false;
       img.onload = () => { if (img.naturalWidth > 16) { img.classList.remove("hidden"); letter.remove(); } };
       img.src = "https://www.google.com/s2/favicons?sz=128&domain=" + encodeURIComponent(host);
       badge.append(letter, img);
       const name = el("h3", "pop-z2 font-display font-semibold text-base sm:text-xl leading-snug clamp2 px-2", l.name);
       name.style.color = "#24343f";
       const hs = el("span", "pop-z2 text-xs rounded-full px-3 py-1 max-w-full truncate", host);
-      hs.dir = "ltr";
-      hs.style.background = "rgba(255,255,255,.6)";
-      hs.style.color = c3;
-      inner.append(badge, name, hs);
-      a.append(inner);
+      hs.dir = "ltr"; hs.style.background = "rgba(255,255,255,.6)"; hs.style.color = c3;
+      inner.append(badge, name, hs); a.append(inner);
     }
-
     a.append(el("div", "glare"));
 
     if (canTilt) {
@@ -382,15 +633,10 @@
         a.style.setProperty("--gx", (x * 100).toFixed(1) + "%");
         a.style.setProperty("--gy", (y * 100).toFixed(1) + "%");
       });
-      a.addEventListener("pointerleave", () => {
-        a.style.setProperty("--rx", "0deg"); a.style.setProperty("--ry", "0deg");
-      });
+      a.addEventListener("pointerleave", () => { a.style.setProperty("--rx", "0deg"); a.style.setProperty("--ry", "0deg"); });
     }
-
-    scene.dataset.id = l.id;
-    a.addEventListener("click", (e) => { if (justDragged) e.preventDefault(); });
-    a.draggable = false;
-    scene.append(a, controls(scene, l));
+    scene.append(a);
+    if (editable) scene.append(controls(scene, l));
     return scene;
   }
 
@@ -420,106 +666,101 @@
     const no = el("button", "btn3d rounded-full px-5 py-2 text-sm text-ink", "إلغاء");
     no.style.setProperty("--btn-edge", "var(--edge)"); no.style.background = "var(--field)";
     yes.type = no.type = "button";
-    yes.onclick = () => { links = links.filter((x) => x.id !== l.id); save(); render(); };
+    yes.onclick = () => {
+      commit((cur) => cur.filter((x) => x.id !== l.id), "حذف موقع: " + l.name).catch(() => {});
+      deleteImage(l.img);
+    };
     no.onclick = () => box.remove();
     row.append(yes, no); box.append(row); scene.append(box); no.focus();
   }
 
+  // ---------- render ----------
   function render() {
     const grid = $("grid");
     grid.textContent = "";
+    const editable = canEdit() && !showingLegacy;
+    const source = showingLegacy ? legacy.map((l, i) => ({ id: "legacy" + i, ...l })) : sites;
     const q = query.trim().toLowerCase();
-    const list = links.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-      .filter((l) => !q || l.name.toLowerCase().includes(q) || l.url.toLowerCase().includes(q));
-    list.forEach((l, i) => grid.append(card(l, i)));
-    $("empty").classList.toggle("hidden", links.length > 0);
-    $("toolbar").classList.toggle("hidden", links.length === 0);
-    $("noResults").classList.toggle("hidden", !(links.length && !list.length));
-    if (sortable) sortable.option("disabled", !!q);
-    $("dragHint").textContent = q ? "امسح البحث لتتمكن من ترتيب المربعات." : "اسحب أي مربع بالماوس لتغيير مكانه.";
-    const n = links.length;
+    const list = source.filter((l) => !q || l.name.toLowerCase().includes(q) || l.url.toLowerCase().includes(q));
+    list.forEach((l, i) => grid.append(card(l, i, editable)));
+
+    const n = source.length;
+    $("loading").classList.toggle("hidden", loaded || n > 0);
+    $("empty").classList.toggle("hidden", !loaded || n > 0);
+    $("toolbar").classList.toggle("hidden", n === 0);
+    $("noResults").classList.toggle("hidden", !(n && !list.length));
     $("count").textContent = n === 0 ? "لا توجد مواقع" : n === 1 ? "موقع واحد" : n === 2 ? "موقعان" : n <= 10 ? ar(n) + " مواقع" : ar(n) + " موقعاً";
+
+    const dragOn = editable && !q && !!sortable;
+    if (sortable) sortable.option("disabled", !dragOn);
+    grid.classList.toggle("sorting", dragOn);
+    $("dragHint").textContent = !canEdit() ? "هذا الجهاز للعرض فقط. اربطه من زر المزامنة لتتمكن من التعديل."
+      : q ? "امسح البحث لتتمكن من ترتيب المربعات."
+      : "اسحب أي مربع بالماوس لتغيير مكانه.";
   }
 
-  $("addForm").addEventListener("submit", (ev) => {
+  // ---------- actions ----------
+  $("addForm").addEventListener("submit", async (ev) => {
     ev.preventDefault(); showMsg("");
+    if (!canEdit()) { showMsg("هذا الجهاز غير مربوط بعد. اربطه أولاً لتتمكن من الإضافة."); openSettings(); return; }
     const name = $("name").value.trim();
     const url = normalize($("url").value);
     if (!name) { showMsg("اكتب اسم الموقع."); $("name").focus(); return; }
     if (!url) { showMsg("الرابط غير صحيح. اكتبه مثل: example.com"); $("url").focus(); return; }
-    const item = { id: "l" + Date.now() + Math.random().toString(36).slice(2, 6), name, url, createdAt: Date.now(), order: links.length };
-    if (pendingImg) item.img = pendingImg;
-    links.push(item);
-    if (!save()) { links.pop(); return; }
-    render();
-    $("name").value = ""; $("url").value = ""; setPending(null); $("name").focus();
+    const btn = $("addBtn"); btn.disabled = true;
+    try {
+      const item = { id: newId(), name, url, createdAt: Date.now() };
+      if (pendingImg) item.img = await uploadImage(pendingImg);
+      $("name").value = ""; $("url").value = ""; setPending(null);
+      await commit((cur) => cur.concat([item]), "إضافة موقع: " + name);
+      $("name").focus();
+    } catch (e) {
+      showMsg(explain(e));
+    }
+    btn.disabled = false;
   });
 
   $("imgBtn").addEventListener("click", () => { changeTarget = null; $("imgFile").click(); });
   $("imgFile").addEventListener("change", (ev) => {
     const f = ev.target.files[0]; ev.target.value = ""; if (!f) return;
     showMsg("");
-    readImage(f, (d) => {
-      if (changeTarget) {
-        const l = links.find((x) => x.id === changeTarget); changeTarget = null;
-        if (!l) return;
-        const old = l.img; l.img = d;
-        if (!save()) { l.img = old; return; }
-        render();
-      } else setPending(d);
+    readImage(f, async (d) => {
+      if (!changeTarget) { setPending(d); return; }
+      const id = changeTarget; changeTarget = null;
+      const l = sites.find((x) => x.id === id); if (!l) return;
+      try {
+        const old = l.img;
+        const path = await uploadImage(d);
+        await commit((cur) => cur.map((x) => x.id === id ? { ...x, img: path } : x), "تغيير صورة: " + l.name);
+        deleteImage(old);
+      } catch (e) { showMsg(explain(e)); }
     });
   });
 
   $("search").addEventListener("input", (e) => { query = e.target.value; render(); });
 
-  $("exportBtn").addEventListener("click", () => {
-    const blob = new Blob([JSON.stringify(links, null, 2)], { type: "application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob); a.download = "mawaqi-backup.json";
-    document.body.append(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  });
-  $("importBtn").addEventListener("click", () => $("importFile").click());
-  $("importFile").addEventListener("change", async (ev) => {
-    const f = ev.target.files[0]; if (!f) return;
-    try {
-      const data = JSON.parse(await f.text());
-      if (!Array.isArray(data)) throw 0;
-      const have = new Set(links.map((l) => l.url));
-      let added = 0;
-      for (const d of data) {
-        if (!d || typeof d.name !== "string" || typeof d.url !== "string") continue;
-        const u = normalize(d.url); if (!u || have.has(u)) continue;
-        const item = { id: "l" + Date.now() + Math.random().toString(36).slice(2, 6), name: d.name, url: u, createdAt: d.createdAt || Date.now(), order: links.length };
-        if (typeof d.img === "string" && d.img.startsWith("data:image/")) item.img = d.img;
-        links.push(item); have.add(u); added++;
-      }
-      save(); render();
-      $("note").textContent = added ? "تم استيراد " + ar(added) + " موقع." : "لا توجد مواقع جديدة في الملف.";
-    } catch (e) { showMsg("الملف غير صالح. اختر ملف نسخة احتياطية صدّرته من هذه الصفحة."); }
-    ev.target.value = "";
-  });
-
   let sortable = null;
   if (window.Sortable) {
     sortable = Sortable.create($("grid"), {
-      animation: 220,
-      easing: "cubic-bezier(.2,.8,.2,1)",
+      animation: 220, easing: "cubic-bezier(.2,.8,.2,1)",
       delay: 180, delayOnTouchOnly: true,
       filter: "button, [data-confirm]", preventOnFilter: false,
-      onEnd: () => {
-        const ids = [...$("grid").children].map((c) => c.dataset.id);
-        ids.forEach((id, i) => { const l = links.find((x) => x.id === id); if (l) l.order = i; });
-        save();
+      onEnd: (evt) => {
         justDragged = true; setTimeout(() => { justDragged = false; }, 250);
+        if (evt.oldIndex === evt.newIndex) return;
+        const ids = [...$("grid").children].map((c) => c.dataset.id);
+        const pos = new Map(ids.map((id, i) => [id, i]));
+        commit((cur) => cur.slice().sort((a, b) => (pos.get(a.id) ?? 1e9) - (pos.get(b.id) ?? 1e9)), "ترتيب المواقع").catch(() => {});
       },
     });
-    $("grid").classList.add("sorting");
-  } else {
-    $("dragHint").classList.add("hidden");
   }
 
+  // ---------- start ----------
+  setSync(token ? "ok" : "off");
   render();
+  pull();
+  // pick up changes made on other devices when coming back to this tab
+  document.addEventListener("visibilitychange", () => { if (!document.hidden && pending === 0) pull(); });
 })();
 </script>
 </body>
