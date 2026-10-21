@@ -1,4 +1,12 @@
 {
   "version": 1,
-  "sites": []
+  "sites": [
+    {
+      "id": "smviklhzssv3q",
+      "name": "استعداد",
+      "url": "https://abdullah2006adi.github.io/iste3dad/",
+      "createdAt": 1792614849112,
+      "img": "img/smviklhzsx3i6.jpg"
+    }
+  ]
 }
