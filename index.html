@@ -72,20 +72,17 @@
   .scene { perspective: 900px; }
   .tile {
     position: relative; aspect-ratio: 1 / 1; border-radius: 28px;
-    transform-style: preserve-3d;
-    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
     transition: transform .25s ease, box-shadow .25s ease;
     box-shadow: 0 1px 0 var(--tile-edge), 0 2px 0 var(--tile-edge), 0 3px 0 var(--tile-edge), 0 4px 0 var(--tile-edge), 0 5px 0 var(--tile-edge), 0 6px 0 var(--tile-edge), 0 22px 34px -14px var(--shadow);
   }
-  .scene:hover .tile {
+  @media (hover: hover) { .scene:hover .tile {
     box-shadow: 0 1px 0 var(--tile-edge), 0 2px 0 var(--tile-edge), 0 3px 0 var(--tile-edge), 0 4px 0 var(--tile-edge), 0 5px 0 var(--tile-edge), 0 6px 0 var(--tile-edge), 0 7px 0 var(--tile-edge), 0 8px 0 var(--tile-edge), 0 36px 48px -18px var(--shadow);
-  }
+  } .scene:hover .glare { opacity: 1; } }
   .tile-face { position: absolute; inset: 0; border-radius: 28px; overflow: hidden; }
   .tile-face::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; box-shadow: inset 0 2px 0 rgba(255,255,255,.55), inset 0 -2px 0 rgba(0,0,0,.06); }
   .glare { position: absolute; inset: 0; border-radius: 28px; pointer-events: none; opacity: 0; transition: opacity .25s; background: radial-gradient(circle at var(--gx, 50%) var(--gy, 0%), rgba(255,255,255,.45), transparent 55%); }
-  .scene:hover .glare { opacity: 1; }
-  .pop-z { transform: translateZ(46px); }
-  .pop-z2 { transform: translateZ(30px); }
+  .tile * { -webkit-user-drag: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 
   .sortable-ghost { opacity: .35; }
   .sortable-ghost .tile { box-shadow: none !important; outline: 3px dashed var(--teal); outline-offset: 4px; }
@@ -584,7 +581,7 @@
   function card(l, i, editable) {
     const [c1, c2, c3, edge] = paletteFor(l.name + l.url);
     const host = hostOf(l.url);
-    const scene = el("div", "scene group relative rise");
+    const scene = el("div", "scene group relative" + (animateNext ? " rise" : ""));
     scene.style.animationDelay = Math.min(i * 50, 500) + "ms";
     scene.dataset.id = l.id;
 
@@ -599,23 +596,17 @@
       pic.alt = ""; pic.draggable = false;
       pic.onerror = () => { if (!pic.dataset.fb && !l.img.startsWith("data:")) { pic.dataset.fb = "1"; pic.src = l.img; } };
       pic.src = imgSrc(l.img);
-      face.append(pic, el("div", "absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent"));
+      face.append(pic);
       a.append(face);
-      const label = el("div", "pop-z absolute inset-x-3 bottom-3 flex items-center justify-between gap-2 rounded-2xl px-3.5 py-2.5 text-white");
-      label.style.background = "rgba(255,255,255,.18)";
-      label.style.backdropFilter = label.style.webkitBackdropFilter = "blur(10px)";
-      label.style.boxShadow = "inset 0 1px 0 rgba(255,255,255,.35), 0 8px 18px -8px rgba(0,0,0,.45)";
-      label.append(el("h3", "min-w-0 font-display font-semibold text-base sm:text-lg leading-snug truncate", l.name));
-      const go = el("span", "shrink-0 grid place-items-center w-8 h-8 rounded-full bg-white/90 text-ink");
-      go.innerHTML = arrowSvg; label.append(go); a.append(label);
+      a.setAttribute("aria-label", l.name);
+      a.title = l.name;
     } else {
       face.style.background = `linear-gradient(150deg, ${c1} 0%, ${c2} 100%)`;
       const blob = el("div", "absolute -top-10 -left-10 w-40 h-40 rounded-full");
       blob.style.background = "radial-gradient(circle, rgba(255,255,255,.6), transparent 70%)";
       face.append(blob); a.append(face);
       const inner = el("div", "absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 text-center");
-      inner.style.transformStyle = "preserve-3d";
-      const badge = el("div", "pop-z grid place-items-center w-20 h-20 sm:w-24 sm:h-24 rounded-[26px] bg-white");
+      const badge = el("div", "grid place-items-center w-20 h-20 sm:w-24 sm:h-24 rounded-[26px] bg-white");
       badge.style.boxShadow = `0 1px 0 ${edge}, 0 2px 0 ${edge}, 0 3px 0 ${edge}, 0 4px 0 ${edge}, 0 16px 24px -10px rgba(40,80,90,.35), inset 0 -3px 0 rgba(0,0,0,.04)`;
       const letter = el("span", "font-display font-bold text-4xl", (l.name.trim()[0] || "؟"));
       letter.style.color = c3;
@@ -624,9 +615,9 @@
       img.onload = () => { if (img.naturalWidth > 16) { img.classList.remove("hidden"); letter.remove(); } };
       img.src = "https://www.google.com/s2/favicons?sz=128&domain=" + encodeURIComponent(host);
       badge.append(letter, img);
-      const name = el("h3", "pop-z2 font-display font-semibold text-base sm:text-xl leading-snug clamp2 px-2", l.name);
+      const name = el("h3", "font-display font-semibold text-base sm:text-xl leading-snug clamp2 px-2", l.name);
       name.style.color = "#24343f";
-      const hs = el("span", "pop-z2 text-xs rounded-full px-3 py-1 max-w-full truncate", host);
+      const hs = el("span", "text-xs rounded-full px-3 py-1 max-w-full truncate", host);
       hs.dir = "ltr"; hs.style.background = "rgba(255,255,255,.6)"; hs.style.color = c3;
       inner.append(badge, name, hs); a.append(inner);
     }
@@ -675,6 +666,7 @@
     no.style.setProperty("--btn-edge", "var(--edge)"); no.style.background = "var(--field)";
     yes.type = no.type = "button";
     yes.onclick = () => {
+      box.remove();
       commit((cur) => cur.filter((x) => x.id !== l.id), "حذف موقع: " + l.name).catch(() => {});
       deleteImage(l.img);
     };
@@ -683,14 +675,21 @@
   }
 
   // ---------- render ----------
+  let lastSig = null, animateNext = true;
   function render() {
     const grid = $("grid");
-    grid.textContent = "";
     const editable = canEdit() && !showingLegacy;
     const source = showingLegacy ? legacy.map((l, i) => ({ id: "legacy" + i, ...l })) : sites;
     const q = query.trim().toLowerCase();
     const list = source.filter((l) => !q || l.name.toLowerCase().includes(q) || l.url.toLowerCase().includes(q));
-    list.forEach((l, i) => grid.append(card(l, i, editable)));
+    // rebuild the tiles only when something really changed, so a tap is never interrupted
+    const sig = JSON.stringify([editable, list.map((l) => [l.id, l.name, l.url, l.img || ""])]);
+    if (sig !== lastSig) {
+      lastSig = sig;
+      grid.textContent = "";
+      list.forEach((l, i) => grid.append(card(l, i, editable)));
+      if (list.length) animateNext = false;
+    }
 
     const n = source.length;
     $("loading").classList.toggle("hidden", loaded || n > 0);
@@ -751,11 +750,11 @@
   if (window.Sortable) {
     sortable = Sortable.create($("grid"), {
       animation: 220, easing: "cubic-bezier(.2,.8,.2,1)",
-      delay: 180, delayOnTouchOnly: true,
+      delay: 200, delayOnTouchOnly: true, touchStartThreshold: 6,
       filter: "button, [data-confirm]", preventOnFilter: false,
       onEnd: (evt) => {
-        justDragged = true; setTimeout(() => { justDragged = false; }, 250);
         if (evt.oldIndex === evt.newIndex) return;
+        justDragged = true; setTimeout(() => { justDragged = false; }, 300);
         const ids = [...$("grid").children].map((c) => c.dataset.id);
         const pos = new Map(ids.map((id, i) => [id, i]));
         commit((cur) => cur.slice().sort((a, b) => (pos.get(a.id) ?? 1e9) - (pos.get(b.id) ?? 1e9)), "ترتيب المواقع").catch(() => {});
