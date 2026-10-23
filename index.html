@@ -137,13 +137,13 @@
       <div class="grid gap-4 lg:grid-cols-[1fr_1.4fr_auto] lg:items-end">
         <label class="block">
           <span class="text-sm text-soft">اسم الموقع</span>
-          <input id="name" type="text" autocomplete="off" placeholder="مثال: منصة استعداد"
+          <input id="name" type="text" name="site-name" autocomplete="off" data-form-type="other" placeholder="مثال: منصة استعداد"
             class="mt-1.5 w-full rounded-2xl border-0 bg-field px-4 py-3.5 text-ink placeholder:text-soft/60 outline-none ring-2 ring-transparent focus:ring-teal transition"
             style="box-shadow: inset 0 2px 4px rgba(0,0,0,.06);">
         </label>
         <label class="block">
           <span class="text-sm text-soft">الرابط</span>
-          <input id="url" type="text" dir="ltr" inputmode="url" autocomplete="off" placeholder="example.com"
+          <input id="url" type="text" name="site-link" dir="ltr" inputmode="url" autocomplete="off" data-form-type="other" placeholder="example.com"
             class="mt-1.5 w-full rounded-2xl border-0 bg-field px-4 py-3.5 text-left text-ink placeholder:text-soft/60 outline-none ring-2 ring-transparent focus:ring-teal transition"
             style="box-shadow: inset 0 2px 4px rgba(0,0,0,.06);">
         </label>
@@ -174,7 +174,7 @@
       </div>
       <div class="relative w-full sm:w-80">
         <svg class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-soft" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input id="search" type="search" placeholder="ابحث في مواقعك…"
+        <input id="search" type="search" name="site-filter" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-form-type="other" placeholder="ابحث في مواقعك…"
           class="clay w-full rounded-full border-0 pr-10 pl-4 py-3 text-sm text-ink placeholder:text-soft/70 outline-none ring-2 ring-transparent focus:ring-teal">
       </div>
     </div>
@@ -190,7 +190,7 @@
       <p class="text-soft mt-1">اكتب اسم الموقع ورابطه في الأعلى، واختر له صورة إن شئت، ثم اضغط «إدخال».</p>
     </div>
     <p id="noResults" class="hidden text-center text-soft py-12">لا توجد نتائج مطابقة.</p>
-    <p class="mt-16 text-center text-xs text-soft/70">الإصدار ٥</p>
+    <p class="mt-16 text-center text-xs text-soft/70">الإصدار ٦</p>
   </div>
 
   <!-- Sync settings -->
@@ -206,7 +206,7 @@
 
       <label class="block mt-5">
         <span class="text-sm text-soft">مفتاح GitHub</span>
-        <input id="tokenInput" type="password" dir="ltr" autocomplete="off" spellcheck="false" placeholder="github_pat_…"
+        <input id="tokenInput" type="text" name="gh-key" dir="ltr" autocomplete="off" data-lpignore="true" data-form-type="other" style="-webkit-text-security: disc;" spellcheck="false" placeholder="github_pat_…"
           class="mt-1.5 w-full rounded-2xl border-0 bg-white/70 dark:bg-white/5 px-4 py-3 text-left text-ink outline-none ring-2 ring-transparent focus:ring-teal">
       </label>
       <div class="mt-4 flex flex-wrap gap-3">
@@ -741,7 +741,13 @@
     });
   });
 
-  $("search").addEventListener("input", (e) => { query = e.target.value; render(); });
+  $("search").value = "";
+  $("search").addEventListener("input", (e) => {
+    if (e.inputType === undefined && /@/.test(e.target.value)) { e.target.value = ""; }  // browser autofill, not typing
+    query = e.target.value; render();
+  });
+  // some browsers fill fields a moment after load
+  setTimeout(() => { if (/@/.test($("search").value)) { $("search").value = ""; query = ""; render(); } }, 800);
 
   let sortable = null;
   if (window.Sortable) {
