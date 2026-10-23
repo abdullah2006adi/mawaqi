@@ -69,14 +69,13 @@
   .btn3d:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--btn-edge), 0 4px 8px -6px var(--shadow); }
   .btn3d:disabled { opacity: .6; cursor: progress; }
 
-  .scene { perspective: 900px; }
+  .scene { }
   .tile {
     position: relative; aspect-ratio: 1 / 1; border-radius: 28px;
-    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
     transition: transform .25s ease, box-shadow .25s ease;
     box-shadow: 0 1px 0 var(--tile-edge), 0 2px 0 var(--tile-edge), 0 3px 0 var(--tile-edge), 0 4px 0 var(--tile-edge), 0 5px 0 var(--tile-edge), 0 6px 0 var(--tile-edge), 0 22px 34px -14px var(--shadow);
   }
-  @media (hover: hover) { .scene:hover .tile {
+  @media (hover: hover) { .scene:hover .tile { transform: translateY(-6px);
     box-shadow: 0 1px 0 var(--tile-edge), 0 2px 0 var(--tile-edge), 0 3px 0 var(--tile-edge), 0 4px 0 var(--tile-edge), 0 5px 0 var(--tile-edge), 0 6px 0 var(--tile-edge), 0 7px 0 var(--tile-edge), 0 8px 0 var(--tile-edge), 0 36px 48px -18px var(--shadow);
   } .scene:hover .glare { opacity: 1; } }
   .tile-face { position: absolute; inset: 0; border-radius: 28px; overflow: hidden; }
@@ -86,7 +85,7 @@
 
   .sortable-ghost { opacity: .35; }
   .sortable-ghost .tile { box-shadow: none !important; outline: 3px dashed var(--teal); outline-offset: 4px; }
-  .sortable-drag .tile { transform: rotate(-3deg) scale(1.04) !important; }
+  .sortable-drag .tile { transform: scale(1.04) !important; }
   #grid.sorting .tile { cursor: grab; }
 
   .clamp2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -191,6 +190,7 @@
       <p class="text-soft mt-1">اكتب اسم الموقع ورابطه في الأعلى، واختر له صورة إن شئت، ثم اضغط «إدخال».</p>
     </div>
     <p id="noResults" class="hidden text-center text-soft py-12">لا توجد نتائج مطابقة.</p>
+    <p class="mt-16 text-center text-xs text-soft/70">الإصدار ٥</p>
   </div>
 
   <!-- Sync settings -->
@@ -627,12 +627,9 @@
       a.addEventListener("pointermove", (e) => {
         const r = a.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-        a.style.setProperty("--ry", ((x - .5) * 16).toFixed(2) + "deg");
-        a.style.setProperty("--rx", ((.5 - y) * 16).toFixed(2) + "deg");
         a.style.setProperty("--gx", (x * 100).toFixed(1) + "%");
         a.style.setProperty("--gy", (y * 100).toFixed(1) + "%");
       });
-      a.addEventListener("pointerleave", () => { a.style.setProperty("--rx", "0deg"); a.style.setProperty("--ry", "0deg"); });
     }
     scene.append(a);
     if (editable) scene.append(controls(scene, l));
